@@ -1,6 +1,13 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
+import 'custom_widgets.dart';
+import 'models/options.dart';
+import 'models/options_to_screen.dart';
+import 'screens/mouvements.dart';
+import 'screens/superviseurs.dart';
+import 'screens/districts_collines.dart';
+import 'screens/autres_champs.dart';
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +16,6 @@ void main() async {
 		await windowManager.setTitle("Collecteur Soft");
 		await windowManager.setTitleBarStyle(TitleBarStyle.normal);
 		await windowManager.setBackgroundColor(Colors.transparent);
-		await windowManager.setMinimumSize(const Size(755, 545));
 		await windowManager.center();
 		await windowManager.show();
 		await windowManager.setSkipTaskbar(false);
@@ -17,6 +23,20 @@ void main() async {
 
 	runApp(const MyApp());
 }
+
+List<Option> opts = [
+	Option(title: "Mouvements", icon: FluentIcons.document),
+	Option(title: "Districts et Collines", icon: FluentIcons.mountain_climbing),
+	Option(title: "Autres champs", icon: FluentIcons.add_field),
+	Option(title: "Superviseurs", icon: FluentIcons.add_friend),
+];
+
+List<OptionsToScreen> opScreens = [
+	OptionsToScreen(opt: opts[0], screen: Mouvements()),
+	OptionsToScreen(opt: opts[1], screen: DistrictsCollines(opt: opts[1])),
+	OptionsToScreen(opt: opts[2], screen: AutresChamps(opt: opts[2])),
+	OptionsToScreen(opt: opts[3], screen: Superviseurs(opt: opts[3])),
+];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,11 +47,11 @@ class MyApp extends StatelessWidget {
       title: 'Collecteur Soft',
 	  theme: FluentThemeData(
 		  brightness: Brightness.light,
-		  accentColor: SystemTheme.accentColor.accent.toAccentColor()
+		  accentColor: Colors.green
 	  ),
 	  darkTheme: FluentThemeData(
 		  brightness: Brightness.dark,
-		  accentColor: SystemTheme.accentColor.accent.toAccentColor()
+		  accentColor: Colors.green
 	  ),
       home: const HomePage(),
     );
@@ -45,6 +65,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WindowListener{
+  String? dateDebut;
+  String? dateFin;
   int index = 0;
 
   @override
@@ -85,12 +107,6 @@ class _HomePageState extends State<HomePage> with WindowListener{
   	super.onWindowClose();
   }
 
-  Widget _Item1() {
-  	return Text("Add");
-  }
-  Widget _Item2() {
-  	return Text("Subtract");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,28 +117,14 @@ class _HomePageState extends State<HomePage> with WindowListener{
 						  index = i;
 						}),
 			displayMode: PaneDisplayMode.compact,
-			items: [
-				PaneItem(
-					icon: Icon(FluentIcons.document), 
-					title: Text("Mouvements"),
-					body: _Item1()
-				),
-				PaneItem(
-					icon: Icon(FluentIcons.mountain_climbing), 
-					title: Text("Districts et Collines"),
-					body: _Item2()
-				),
-				PaneItem(
-					icon: Icon(FluentIcons.add_field), 
-					title: Text("Autres champs"),
-					body: _Item2()
-				),
-				PaneItem(
-					icon: Icon(FluentIcons.add_friend), 
-					title: Text("Superviseurs"),
-					body: _Item2()
-				),
-			]
+			items: opScreens.map<NavigationPaneItem>((option){
+				return PaneItem(
+					icon: Icon(option.opt.icon),
+					body: option.screen,
+					title: Text(option.opt.title),
+					trailing: Icon(FluentIcons.chevron_right)
+				);
+			}).toList()
 		),
 	  );
   }

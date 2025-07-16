@@ -1,16 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/models/options.dart';
 
-class Mouvements extends StatefulWidget {
+class Superviseurs extends StatefulWidget {
   final Option opt;
-  const Mouvements({super.key,
+  const Superviseurs({super.key,
   					required this.opt});
 
   @override
-  State<Mouvements> createState() => _MouvementsState();
+  State<Superviseurs> createState() => _SuperviseursState();
 }
 
-class _MouvementsState extends State<Mouvements> {
+class _SuperviseursState extends State<Superviseurs> {
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
