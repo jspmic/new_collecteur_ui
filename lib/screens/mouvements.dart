@@ -32,10 +32,12 @@ class _MouvementsState extends State<Mouvements> {
 							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 							children: [
 								const Text("Date début:"),
+								Divider(),
 								DatePicker(
 									header: "Choisissez une date",
 									selected: dateDebut,
 									onChanged: (date) => setState(() => dateDebut = date ),
+									locale: Locale('fr')
 								)
 							],
 						), // Row
@@ -46,10 +48,12 @@ class _MouvementsState extends State<Mouvements> {
 							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 							children: [
 								const Text("Date fin:"),
+								Divider(),
 								DatePicker(
 									header: "Choisissez une date",
 									selected: dateFin,
 									onChanged: (date) => setState(() => dateFin = date ),
+									locale: Locale('fr')
 								)
 							],
 						), // Row
