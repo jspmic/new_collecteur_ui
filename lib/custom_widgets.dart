@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:system_theme/system_theme.dart';
 
 // Function to format a date
 String? formatDate(DateTime? _date){
