@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
 import 'custom_widgets.dart';
 import 'models/options.dart';
@@ -8,6 +7,7 @@ import 'screens/mouvements.dart';
 import 'screens/superviseurs.dart';
 import 'screens/districts_collines.dart';
 import 'screens/autres_champs.dart';
+import 'screens/annonces.dart';
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
@@ -28,14 +28,16 @@ List<Option> opts = [
 	Option(title: "Mouvements", icon: FluentIcons.document),
 	Option(title: "Districts et Collines", icon: FluentIcons.mountain_climbing),
 	Option(title: "Autres champs", icon: FluentIcons.add_field),
-	Option(title: "Superviseurs", icon: FluentIcons.add_friend),
+	Option(title: "Superviseurs", icon: FluentIcons.contact_info),
+	Option(title: "Annonces", icon: FluentIcons.info),
 ];
 
 List<OptionsToScreen> opScreens = [
 	OptionsToScreen(opt: opts[0], screen: Mouvements()),
-	OptionsToScreen(opt: opts[1], screen: DistrictsCollines(opt: opts[1])),
+	OptionsToScreen(opt: opts[1], screen: DistrictsCollines()),
 	OptionsToScreen(opt: opts[2], screen: AutresChamps(opt: opts[2])),
-	OptionsToScreen(opt: opts[3], screen: Superviseurs(opt: opts[3])),
+	OptionsToScreen(opt: opts[3], screen: Superviseurs()),
+	OptionsToScreen(opt: opts[4], screen: Annonces()),
 ];
 
 class MyApp extends StatelessWidget {
