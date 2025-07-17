@@ -11,6 +11,8 @@ dependencies:
   fluent_ui: ^4.12.0
   window_manager: ^0.5.1
   syncfusion_flutter_xlsio: ^30.1.40
+  flutter_dotenv: ^5.2.1
+  http: ^1.4.0
 
 dev_dependencies:
   flutter_test:
