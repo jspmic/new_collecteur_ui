@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
+import 'package:new_collecteur_ui/api/superviseur_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 
 class Mouvements extends StatefulWidget {
@@ -18,10 +19,7 @@ class _MouvementsState extends State<Mouvements> {
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
-			header: Center(
-				heightFactor: 2,
-				child: const Text("Mouvements", style: TextStyle(fontSize: 24)),
-			),
+			header: PageHeader(title: Center(child: Text("Mouvements"))),
 			content: Column(
 					crossAxisAlignment: CrossAxisAlignment.center,
 					children: [
@@ -93,7 +91,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Superviseur:"),
 								DropDownButton(
 									title: Text(superviseur),
-									items: superviseurs.map<MenuFlyoutItem>((superv) {
+									items: superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {
 												superviseur=superv.nom_utilisateur;
@@ -107,7 +105,7 @@ class _MouvementsState extends State<Mouvements> {
 							height: MediaQuery.of(context).size.height/15,
 						), // SizedBox
 						Button(
-							onPressed: (){},
+							onPressed: () => getSuperviseurs(),
 							child: const Text("Continuer", style: TextStyle(fontSize: 22)),
 						)
 					],
