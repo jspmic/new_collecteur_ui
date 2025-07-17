@@ -104,11 +104,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   image:
     dependency: transitive
     description:
@@ -362,22 +357,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "30.1.40"
-  system_theme:
-    dependency: "direct main"
-    description:
-      name: system_theme
-      sha256: "5f93485401689601d4636a695f99f7c70a30873ee68c1d95025d908a3386be7e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
-  system_theme_web:
-    dependency: transitive
-    description:
-      name: system_theme_web
-      sha256: "900c92c5c050ce58048f241ef9a17e5cd8629808325a05b473dc62a6e99bae77"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
   term_glyph:
     dependency: transitive
     description:
@@ -418,14 +397,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.0"
-  web:
-    dependency: transitive
-    description:
-      name: web
-      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   window_manager:
     dependency: "direct main"
     description:
