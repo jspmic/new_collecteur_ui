@@ -14,7 +14,9 @@ class _DistrictsCollinesState extends State<DistrictsCollines> {
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
-			header: PageHeader(title: Center(child: const Text("Districts et Collines"))),
+			header: PageHeader(
+				title: const Text("Districts et Collines")
+			),
 			content: Container(
 				child:
 					ListView.builder(
