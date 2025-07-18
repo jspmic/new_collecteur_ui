@@ -15,6 +15,7 @@ void initializeGlobals() {
 
 Future<bool> init() async {
 	await dotenv.load(fileName: ".env");
+	clearGlobals();
 	try {
 		bool loadingSuperviseurs = await getSuperviseurs();
 		if (!loadingSuperviseurs) {

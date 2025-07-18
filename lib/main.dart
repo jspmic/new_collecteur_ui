@@ -13,7 +13,6 @@ import 'screens/autres_champs.dart';
 import 'screens/annonces.dart';
 
 void main() async {
-	initializeGlobals();
 	WidgetsFlutterBinding.ensureInitialized();
 	await windowManager.ensureInitialized();
 	windowManager.waitUntilReadyToShow().then((_) async {

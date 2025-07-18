@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
@@ -16,6 +17,7 @@ class _MouvementsState extends State<Mouvements> {
 	DateTime? dateFin;
 	String program = "Program";
 	String superviseur = "Superviseur";
+	bool isCharging = false;
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -38,18 +40,23 @@ class _MouvementsState extends State<Mouvements> {
 				commandBar: CommandBar(primaryItems: [
 					CommandBarButton(
 						onPressed: () async {
-							clearGlobals();
+							setState(() {
+								isCharging = true;
+							});
 							bool initStatus = await init();
 							if (!initStatus) {
 								popItUp(context, "Le chargement a échoué");
-								initializeGlobals();
-								setState(() {});
+								setState(() {
+									isCharging = false;
+								});
 								return;
 							}
 							popItUp(context, "Le chargement s'est effectué avec succès");
-							setState(() {});
+							setState(() {
+								isCharging = false;
+							});
 						},
-						icon: const Icon(FluentIcons.refresh),
+						icon: isCharging ? ProgressRing() : Icon(FluentIcons.refresh),
 						label: const Text("Charger")
 					)
 				]),
@@ -126,7 +133,9 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Superviseur:"),
 								DropDownButton(
 									title: Text(superviseur),
-									items: superviseursList.map<MenuFlyoutItem>((superv) {
+									items: superviseursList.isEmpty ? [
+										MenuFlyoutItem(text: Text(""), onPressed: (){})
+									] : superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {
 												superviseur=superv.nom_utilisateur;
