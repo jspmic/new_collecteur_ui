@@ -43,7 +43,26 @@ Future<bool> addSuperviseurs(Superviseur sup) async {
 	if (response.statusCode != 201) {
 		return false;
 	}
+	final returnedSuperviseur = jsonDecode(response.body);
+	sup.id = returnedSuperviseur["id"];
 	sup.psswd = "";
 	superviseursList.add(sup);
+	return true;
+}
+
+Future<bool> deleteSuperviseurs(Superviseur sup) async {
+	Uri uri = Uri.parse("$HOST/api/list");
+	http.Response response = await http.delete(
+		uri,
+		headers: {
+			"x-api-key": COLLECTEUR_SECRET,
+			"Content-Type": "application/json"
+		},
+		body: jsonEncode({"id": sup.id})
+	);
+	if (response.statusCode != 200) {
+		return false;
+	}
+	superviseursList.remove(sup);
 	return true;
 }
