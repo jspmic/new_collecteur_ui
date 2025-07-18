@@ -13,6 +13,8 @@ class Superviseurs extends StatefulWidget {
 }
 
 class _SuperviseursState extends State<Superviseurs> {
+	bool isDeleting = false;
+
 	void apply(BuildContext context) async {
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
@@ -86,8 +88,11 @@ class _SuperviseursState extends State<Superviseurs> {
 							s.psswd = password;
 							bool status = await addSuperviseurs(s);
 							if (status) {
+								Navigator.pop(context);
+								// Add a new Popup here to show the status
 							}
 							else {
+								// Add a new Popup here to show the status
 							}
 						},
 						child: isLoading ? ProgressRing() : Text("Ajouter"),
@@ -101,6 +106,38 @@ class _SuperviseursState extends State<Superviseurs> {
 		);
 		setState(() { });
 	}
+
+	void deletePopItUp(BuildContext context, String mssg) async {
+		await showDialog(context: context,
+			builder: (context) => ContentDialog(
+				title: const Text("Status de l'opération"),
+				content: Text(mssg),
+				actions: [
+					Button(
+						onPressed: () => Navigator.pop(context),
+						child: const Text("Ok"),
+					),
+				],
+			)
+		);
+	}
+
+	void delete(Superviseur s) async {
+		setState(() {
+			isDeleting = true;
+		});
+		bool deleteStatus = await deleteSuperviseurs(s);
+		if (deleteStatus) {
+			deletePopItUp(context, "Superviseur supprimé");
+		}
+		else {
+			deletePopItUp(context, "Superviseur non supprimé");
+		}
+		setState(() {
+			isDeleting = false;
+		});
+	}
+
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
@@ -133,7 +170,7 @@ class _SuperviseursState extends State<Superviseurs> {
 					final superviseur = superviseursList[index];
 					final pssw = superviseur.psswd;
 					return Expander(
-						leading: IconButton(onPressed: (){},
+						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () => delete(superviseur),
 						icon: Icon(FluentIcons.calculator_multiply)),
 						header: TextBox(placeholder: superviseur.nom_utilisateur),
 						content: PasswordBox(placeholder: pssw ?? "Nouveau mot de passe pour le superviseur...", revealMode: PasswordRevealMode.peek),
