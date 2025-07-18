@@ -16,10 +16,45 @@ class _MouvementsState extends State<Mouvements> {
 	DateTime? dateFin;
 	String program = "Program";
 	String superviseur = "Superviseur";
+
+	void popItUp(BuildContext context, String mssg) async {
+		await showDialog(context: context,
+			builder: (context) => ContentDialog(
+				title: const Text("Status du chargement"),
+				content: Text(mssg),
+				actions: [
+					Button(
+						onPressed: () => Navigator.pop(context),
+						child: const Text("Ok"),
+					),
+				],
+			)
+		);
+	}
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
-			header: PageHeader(title: Center(child: Text("Mouvements"))),
+			header: PageHeader(
+				commandBar: CommandBar(primaryItems: [
+					CommandBarButton(
+						onPressed: () async {
+							clearGlobals();
+							bool initStatus = await init();
+							if (!initStatus) {
+								popItUp(context, "Le chargement a échoué");
+								initializeGlobals();
+								setState(() {});
+								return;
+							}
+							popItUp(context, "Le chargement s'est effectué avec succès");
+							setState(() {});
+						},
+						icon: const Icon(FluentIcons.refresh),
+						label: const Text("Charger")
+					)
+				]),
+				title: const Text("Mouvements")
+			),
 			content: Column(
 					crossAxisAlignment: CrossAxisAlignment.center,
 					children: [

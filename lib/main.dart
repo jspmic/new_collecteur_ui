@@ -1,5 +1,4 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
@@ -14,11 +13,7 @@ import 'screens/autres_champs.dart';
 import 'screens/annonces.dart';
 
 void main() async {
-	await dotenv.load(fileName: ".env");
-	bool loadingSuperviseurs = await getSuperviseurs();
-	if (!loadingSuperviseurs) {
-		superviseursList = [Superviseur(id: 0, nom_utilisateur: "")];
-	}
+	initializeGlobals();
 	WidgetsFlutterBinding.ensureInitialized();
 	await windowManager.ensureInitialized();
 	windowManager.waitUntilReadyToShow().then((_) async {
