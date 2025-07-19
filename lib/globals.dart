@@ -9,5 +9,5 @@ List<Lot> lots = [Lot(id: 0, nom: "Lot 1", districts: ["Gihogazi"]), Lot(id: 1, 
 
 // Field changed
 Map<int, Lot> lotsChanged = {};
-List<Superviseur> addedSuperviseurs = [];
+Map<int, Superviseur> modifiedSuperviseurs = {};
 Map<String, String> districtsChanged = {};

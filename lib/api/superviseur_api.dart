@@ -38,14 +38,14 @@ Future<bool> addSuperviseurs(Superviseur sup) async {
 			"x-api-key": CODE,
 			"Content-Type": "application/json"
 		},
-		body: jsonEncode(sup.toJson())
+		body: superviseurToJson(sup)
 	);
 	if (response.statusCode != 201) {
 		return false;
 	}
 	final returnedSuperviseur = jsonDecode(response.body);
 	sup.id = returnedSuperviseur["id"];
-	sup.psswd = "";
+	sup.psswd = null;
 	superviseursList.add(sup);
 	return true;
 }
@@ -64,5 +64,33 @@ Future<bool> deleteSuperviseurs(Superviseur sup) async {
 		return false;
 	}
 	superviseursList.remove(sup);
+	return true;
+}
+
+Future<bool> modifySuperviseurs(Superviseur sup) async {
+	Uri uri = Uri.parse("$HOST/api/list?id=${sup.id}");
+	http.Response response = await http.patch(
+		uri,
+		headers: {
+			"x-api-key": COLLECTEUR_SECRET,
+			"Content-Type": "application/json"
+		},
+		body: superviseurToJson(sup)
+	);
+	if (response.statusCode != 200) {
+		return false;
+	}
+	Superviseur modifiedSuperviseur = superviseurFromJson(response.body);
+	int? seekIndex;
+	for (Superviseur s in superviseursList) {
+		if (s.id == modifiedSuperviseur.id) {
+			seekIndex = superviseursList.indexOf(s);
+			break;
+		}
+	}
+	if (seekIndex == null) {
+		return false;
+	}
+	superviseursList[seekIndex] = modifiedSuperviseur;
 	return true;
 }

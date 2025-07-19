@@ -14,6 +14,21 @@ class Superviseurs extends StatefulWidget {
 
 class _SuperviseursState extends State<Superviseurs> {
 	bool isDeleting = false;
+	bool isModifying = false;
+
+	void popItUp(BuildContext context, String mssg) async {
+		await showDialog(context: context,
+			builder: (context) => ContentDialog(
+				title: const Text("Information"),
+				content: Text(mssg),
+				actions: [
+					Button(
+						onPressed: () => Navigator.pop(context),
+						child: const Text("Ok"),
+					),
+				],
+		));
+	}
 
 	void apply(BuildContext context) async {
 		await showDialog(context: context,
@@ -22,7 +37,25 @@ class _SuperviseursState extends State<Superviseurs> {
 				content: const Text("Appliquer les changements?"),
 				actions: [
 					Button(
-						onPressed: (){},
+						onPressed: () async {
+							Navigator.pop(context);
+							setState(() {
+								isModifying = true;
+							});
+							modifiedSuperviseurs.forEach((index, sup) async {
+								bool status = await modifySuperviseurs(sup);
+								if (status) {
+									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
+								}
+								else {
+									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
+								}
+							});
+							modifiedSuperviseurs = {};
+							setState(() {
+								isModifying = false;
+							});
+						},
 						child: const Text("Oui"),
 					),
 					Button(
@@ -41,7 +74,11 @@ class _SuperviseursState extends State<Superviseurs> {
 				content: const Text("Annuler les changements?"),
 				actions: [
 					Button(
-						onPressed: (){},
+						onPressed: (){
+							setState(() {
+								modifiedSuperviseurs = {};
+							});
+						},
 						child: const Text("Oui"),
 					),
 					Button(
@@ -89,10 +126,10 @@ class _SuperviseursState extends State<Superviseurs> {
 							bool status = await addSuperviseurs(s);
 							if (status) {
 								Navigator.pop(context);
-								// Add a new Popup here to show the status
+								popItUp(context, "Superviseur ajouté");
 							}
 							else {
-								// Add a new Popup here to show the status
+								popItUp(context, "Superviseur non ajouté");
 							}
 						},
 						child: isLoading ? ProgressRing() : Text("Ajouter"),
@@ -123,19 +160,37 @@ class _SuperviseursState extends State<Superviseurs> {
 	}
 
 	void delete(Superviseur s) async {
-		setState(() {
-			isDeleting = true;
-		});
-		bool deleteStatus = await deleteSuperviseurs(s);
-		if (deleteStatus) {
-			deletePopItUp(context, "Superviseur supprimé");
-		}
-		else {
-			deletePopItUp(context, "Superviseur non supprimé");
-		}
-		setState(() {
-			isDeleting = false;
-		});
+		await showDialog(context: context,
+			builder: (context) => ContentDialog(
+				title: const Text("Confirmation"),
+				content: Text("Voulez-vous supprimer le superviseur '${s.nom_utilisateur}'?"),
+				actions: [
+					Button(
+						onPressed: () async {
+							Navigator.pop(context);
+							setState(() {
+								isDeleting = true;
+							});
+							bool deleteStatus = await deleteSuperviseurs(s);
+							if (deleteStatus && mounted) {
+								deletePopItUp(context, "Superviseur supprimé");
+							}
+							else {
+								deletePopItUp(context, "Superviseur non supprimé");
+							}
+							setState(() {
+								isDeleting = false;
+							});
+						},
+						child: const Text("Oui"),
+					),
+					Button(
+						onPressed: () => Navigator.pop(context),
+						child: const Text("Non"),
+					),
+				],
+			)
+		);
 	}
 
 	@override
@@ -150,13 +205,15 @@ class _SuperviseursState extends State<Superviseurs> {
 					icon: Icon(FluentIcons.add)
 				),
 				CommandBarButton(
-					onPressed: () => apply(context),
-					label: Text("Appliquer"),
+					onPressed: () => modifiedSuperviseurs.isEmpty ? popItUp(context, "Pas de changement(s) enregistré(s)") :
+					apply(context),
+					label: isModifying ? ProgressBar() : Text("Appliquer"),
 					tooltip: "Appliquer les changements",
 					icon: Icon(FluentIcons.accept)
 				),
 				CommandBarButton(
-					onPressed: () => deny(context),
+					onPressed: () => modifiedSuperviseurs.isEmpty ? popItUp(context, "Pas de changement(s) enregistré(s)") :
+					deny(context),
 					label: Text("Annuler"),
 					tooltip: "Annuler les changements",
 					icon: Icon(FluentIcons.calculator_multiply)
@@ -168,12 +225,37 @@ class _SuperviseursState extends State<Superviseurs> {
 				itemCount: superviseursList.length,
 				itemBuilder: (context, index) {
 					final superviseur = superviseursList[index];
+					final username = superviseur.nom_utilisateur;
 					final pssw = superviseur.psswd;
 					return Expander(
 						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () => delete(superviseur),
 						icon: Icon(FluentIcons.calculator_multiply)),
-						header: TextBox(placeholder: superviseur.nom_utilisateur),
-						content: PasswordBox(placeholder: pssw ?? "Nouveau mot de passe pour le superviseur...", revealMode: PasswordRevealMode.peek),
+						header: TextBox(
+							placeholder: superviseur.nom_utilisateur,
+							onChanged: (newUsername) {
+								if (newUsername.isEmpty) {
+									superviseur.nom_utilisateur = username;
+								}
+								else {
+									superviseur.nom_utilisateur = newUsername;
+								}
+								modifiedSuperviseurs[superviseur.id] = superviseur;
+							},
+						), // TextBox
+						content: PasswordBox(
+							placeholder: pssw ?? "Nouveau mot de passe pour le superviseur...",
+							revealMode: PasswordRevealMode.peek,
+							onChanged: (newPassword) {
+								if (newPassword.isEmpty) {
+									superviseur.psswd = null;
+								}
+								else {
+									String password = sha256.convert(utf8.encode(newPassword)).toString();
+									superviseur.psswd = password;
+								}
+								modifiedSuperviseurs[superviseur.id] = superviseur;
+							},
+						), // PasswordBox
 					); // Expander
 				}
 			),

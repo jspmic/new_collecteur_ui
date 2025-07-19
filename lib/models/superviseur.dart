@@ -19,6 +19,6 @@ class Superviseur {
 
     Map<String, dynamic> toJson() => {
         "_n_9032": nom_utilisateur,
-        "_n_9064": psswd,
+        psswd == null ? "" : "_n_9064": psswd,
     };
 }
