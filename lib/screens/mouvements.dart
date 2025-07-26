@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
-import 'package:new_collecteur_ui/api/superviseur_api.dart';
+import 'package:new_collecteur_ui/api/transfert_api.dart';
+import 'package:new_collecteur_ui/screens/afficher_mouvements.dart';
 import 'package:new_collecteur_ui/globals.dart';
 
 class Mouvements extends StatefulWidget {
@@ -16,8 +15,11 @@ class _MouvementsState extends State<Mouvements> {
 	DateTime? dateDebut;
 	DateTime? dateFin;
 	String program = "Program";
+	String district = "District";
 	String superviseur = "Superviseur";
 	bool isCharging = false;
+	bool isPopulating = false;
+	int userId = 0;
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -33,6 +35,49 @@ class _MouvementsState extends State<Mouvements> {
 			)
 		);
 	}
+
+	void getMouvements() async {
+		if (dateDebut == null) {
+			popItUp(context, "Veuillez sélectionner au moins la date de début");
+			return;
+		}
+		if (!(types_mouvement.contains(program))) {
+			popItUp(context, "Veuillez choisir le type de mouvements");
+			return;
+		}
+		if (superviseur == "Superviseur") {
+			popItUp(context, "Veuillez choisir un superviseur");
+			return;
+		}
+
+		if (district == "District" && program == "Livraison") {
+			popItUp(context, "Veuillez choisir un district");
+			return;
+		}
+
+		setState(() {
+			isPopulating = true;
+		});
+		bool retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
+		setState(() {
+			isPopulating = false;
+		});
+		if (retrievingStatus && mounted) {
+			Navigator.push(
+				context,
+				PageRouteBuilder(pageBuilder: (context, _, _) => AfficherMouvements(
+					dateDebut: formatDate(dateDebut),
+					dateFin: formatDate(dateFin),
+					program: program
+					) // AfficherMouvements
+				) // PageRouteBuilder
+			);
+		}
+		else if (mounted && !retrievingStatus) {
+			popItUp(context, "Erreur de chargement des transferts");
+		}
+	}
+
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
@@ -138,6 +183,7 @@ class _MouvementsState extends State<Mouvements> {
 									] : superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {
+												userId = superv.id;
 												superviseur=superv.nom_utilisateur;
 											});
 										});
@@ -148,8 +194,8 @@ class _MouvementsState extends State<Mouvements> {
 						SizedBox(
 							height: MediaQuery.of(context).size.height/15,
 						), // SizedBox
-						Button(
-							onPressed: () => getSuperviseurs(),
+						isPopulating ? ProgressRing() : Button(
+							onPressed: () => getMouvements(),
 							child: const Text("Continuer", style: TextStyle(fontSize: 22)),
 						)
 					],
