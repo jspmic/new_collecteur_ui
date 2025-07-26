@@ -1,78 +1,109 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/globals.dart';
-import 'package:new_collecteur_ui/models/lot.dart';
 
 class DistrictsCollines extends StatefulWidget {
   const DistrictsCollines({super.key});
-
   @override
   State<DistrictsCollines> createState() => _DistrictsCollinesState();
 }
 
 class _DistrictsCollinesState extends State<DistrictsCollines> {
-	String lotSelected = "";
-	@override
-	  Widget build(BuildContext context) {
-	  	return ScaffoldPage(
-			header: PageHeader(
-				title: const Text("Districts et Collines")
-			),
-			content: Container(
-				child:
-					ListView.builder(
-						shrinkWrap: true,
-						itemCount: lots.length,
-						itemBuilder: (context, index) {
-							final lot = lots[index];
-							return Expander(
-								leading: Icon(FluentIcons.document),
-								trailing: const Text("Lot"),
-								header: SizedBox(
-									width: MediaQuery.of(context).size.width/4,
-									child: 
-										TextBox(
-											placeholder: lotSelected == "" ? lot.nom : lotSelected,
-											onChanged: (value){
-												Lot copyLot = lot;
-												copyLot.nom = value;
-												lotsChanged[index] = copyLot;
-												if (lotsChanged[index]!.nom.isEmpty) {
-													lotsChanged.remove(index);
-												}
-												print("$lotsChanged");
-											},
-										)
-								),
-								content: ListView.builder(
-									shrinkWrap: true,
-									itemCount: lot.districts.length,
-									itemBuilder: (context, index2) {
-										final district = lot.districts[index2];
-										return SingleChildScrollView(child: Expander(
-											leading: Icon(FluentIcons.edit_mirrored),
-											trailing: const Text("District"),
-											header: SizedBox(
-												child: TextBox(placeholder: district)
-											),
-											content: ListView.builder(
-												shrinkWrap: true,
-												itemCount: districts[district]!.collines.length,
-												itemBuilder: (context, index3) {
-													final colline = districts[district]!.collines[index3];
-													return TextBox(placeholder: colline);
-												},
-											), // builder-content
-										));
-									},
-								), // builder-content
-								onStateChanged: (open) {
-									lotSelected = lot.nom;
-									print(lotSelected);
-								}
-							); // Expander
-						}
-					), // ListView
-			) // Center
-		);
-	  }
+  String lotSelected = "";
+  final Set<int> expandedLots = {};
+  final Map<int, Set<int>> expandedDistricts = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaffoldPage(
+      header: const PageHeader(title: Text("Districts et Collines")),
+      content: ListView.builder(
+        itemCount: lots.length,
+        itemBuilder: (context, lotIndex) {
+          final lot = lots[lotIndex];
+          final isExpanded = expandedLots.contains(lotIndex);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                title: TextBox(
+				  enabled: false,
+                  placeholder: lot.nom,
+                  onChanged: (value) {
+                    setState(() {
+                      lot.nom = value;
+                    });
+                  },
+                ),
+                trailing: IconButton(
+                  icon: Icon(isExpanded ? FluentIcons.chevron_up : FluentIcons.chevron_down),
+                  onPressed: () {
+                    setState(() {
+                      if (isExpanded) {
+                        expandedLots.remove(lotIndex);
+                      } else {
+                        expandedLots.add(lotIndex);
+                      }
+                    });
+                  },
+                ),
+              ),
+              if (isExpanded)
+                ...lot.districts.asMap().entries.map((entry) {
+                  final districtIndex = entry.key;
+                  final district = entry.value;
+                  final isDistrictExpanded = expandedDistricts[lotIndex]?.contains(districtIndex) ?? false;
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: TextBox(
+							enabled: false,
+                            placeholder: district.nom,
+                            onChanged: (value) {
+                              setState(() {
+                                district.nom = value;
+                              });
+                            },
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(isDistrictExpanded ? FluentIcons.chevron_up : FluentIcons.chevron_down),
+                            onPressed: () {
+                              setState(() {
+                                expandedDistricts[lotIndex] ??= {};
+                                if (isDistrictExpanded) {
+                                  expandedDistricts[lotIndex]!.remove(districtIndex);
+                                } else {
+                                  expandedDistricts[lotIndex]!.add(districtIndex);
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        if (isDistrictExpanded)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Column(
+                              children: district.collines.map((colline) {
+                                return TextBox(
+								  enabled: false,
+                                  placeholder: colline,
+                                  onChanged: (value) {
+                                    // Set new colline value
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          )
+                      ],
+                    ),
+                  );
+                }),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
+
