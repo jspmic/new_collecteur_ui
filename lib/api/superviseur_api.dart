@@ -23,7 +23,9 @@ Future<bool> getSuperviseurs() async {
 		superviseursList.add(
 			Superviseur(
 				id: sup["id"],
+				nom: sup["nom"],
 				nom_utilisateur: sup["_n_9032"],
+				lot: sup["lot"],
 			)
 		);
 	}
@@ -45,6 +47,7 @@ Future<bool> addSuperviseurs(Superviseur sup) async {
 	}
 	final returnedSuperviseur = jsonDecode(response.body);
 	sup.id = returnedSuperviseur["id"];
+	sup.lot = returnedSuperviseur["lot"];
 	sup.psswd = null;
 	superviseursList.add(sup);
 	return true;
