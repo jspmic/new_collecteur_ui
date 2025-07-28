@@ -18,6 +18,7 @@ Future<bool> getFields() async {
 	uri);
 	if (response.statusCode == 200) {
 		Map resp = jsonDecode(response.body);
+		// Retrieving Lots, Districts and Collines
 		Map<String, dynamic> _lots = resp["lots"]; // lot: district
 		Map<String, dynamic> _districts = resp["districts"]; // district: colline
 		Map<String, District> collectedDistricts = {};
@@ -40,6 +41,14 @@ Future<bool> getFields() async {
 			);
 			lots.add(l);
 		}
+
+		// Retrieving other fields
+		List stocks = resp['stock_central'];
+		stocks.forEach((stock) => collectedStocks.add(stock.toString()));
+		List inputs = resp['input'];
+		inputs.forEach((inp) => collectedInputs.add(inp.toString()));
+		List type_transports = resp['type_transport'];
+		type_transports.forEach((type) => collectedTypeTransports.add(type.toString()));
 	}
 	else {
 		return false;
