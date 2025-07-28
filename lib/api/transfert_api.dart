@@ -20,7 +20,6 @@ Future<bool> getTransferts(DateTime? _date1, DateTime? _date2, int userId) async
 	else {
 		uri = Uri.parse("$HOST/api/transferts?date=$date1&userId=$userId");
 	}
-	print(uri);
 	http.Response response = await http.get(uri);
 	if (response.statusCode != 200) {
 		return false;
