@@ -15,7 +15,18 @@ class _DistrictsCollinesState extends State<DistrictsCollines> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      header: const PageHeader(title: Text("Districts et Collines")),
+      header: PageHeader(
+		  title: Text("Districts et Collines"),
+		  commandBar: CommandBar(
+			  primaryItems: [
+				CommandBarButton(
+					onPressed: (){},
+					icon: Icon(FluentIcons.add),
+					label: const Text("Ajouter un lot")
+				)
+			  ]
+		  ),
+	  ),
       content: ListView.builder(
         itemCount: lots.length,
         itemBuilder: (context, lotIndex) {
