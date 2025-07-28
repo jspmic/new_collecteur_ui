@@ -15,6 +15,7 @@ class Superviseurs extends StatefulWidget {
 class _SuperviseursState extends State<Superviseurs> {
 	bool isDeleting = false;
 	bool isModifying = false;
+	String lot = "Nouveau Lot pour le superviseur...";
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -94,7 +95,9 @@ class _SuperviseursState extends State<Superviseurs> {
 		bool isLoading = false;
 		TextEditingController pssw = TextEditingController();
 		TextEditingController nom = TextEditingController();
-		Superviseur s = Superviseur(nom_utilisateur: "", id: 0);
+		TextEditingController lot = TextEditingController();
+		TextEditingController alias = TextEditingController();
+		Superviseur s = Superviseur(nom_utilisateur: "", id: 0, lot: "", nom: "");
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
 				title: const Text("Ajouter un superviseur"),
@@ -104,25 +107,41 @@ class _SuperviseursState extends State<Superviseurs> {
 					children: [
 						TextBox(
 							controller: nom,
-							placeholder: "Nom du superviseur (minuscule, sans espace)",
+							placeholder: "Nom complet du superviseur...",
 						),
+						SizedBox(height: MediaQuery.of(context).size.height/25),
+						TextBox(
+							controller: alias,
+							placeholder: "Alias du superviseur...",
+						),
+						SizedBox(height: MediaQuery.of(context).size.height/25),
+						Divider(),
+						SizedBox(height: MediaQuery.of(context).size.height/25),
+						TextBox(
+							controller: lot,
+							placeholder: "Lot d'opération du superviseur...",
+						),
+						SizedBox(height: MediaQuery.of(context).size.height/25),
+						Divider(),
 						SizedBox(height: MediaQuery.of(context).size.height/25),
 						PasswordBox(
 							controller: pssw,
 							revealMode: PasswordRevealMode.peek,
-							placeholder: "Mot de passe...",
+							placeholder: "Mot de passe du superviseur...",
 						),
 					],
 				), // Column
 				actions: [
 					Button(
 						onPressed: () async {
-							if (pssw.text.isEmpty || nom.text.isEmpty) {
+							if (pssw.text.isEmpty || nom.text.isEmpty || alias.text.isEmpty || lot.text.isEmpty) {
 								return;
 							}
 							String password = sha256.convert(utf8.encode(pssw.text)).toString();
-							s.nom_utilisateur = nom.text;
+							s.nom = nom.text;
 							s.psswd = password;
+							s.lot = lot.text;
+							s.nom_utilisateur = alias.text;
 							bool status = await addSuperviseurs(s);
 							if (status) {
 								Navigator.pop(context);
@@ -226,11 +245,28 @@ class _SuperviseursState extends State<Superviseurs> {
 				itemBuilder: (context, index) {
 					final superviseur = superviseursList[index];
 					final username = superviseur.nom_utilisateur;
+					final lot = superviseur.lot;
+					final nom = superviseur.nom;
 					final pssw = superviseur.psswd;
+
+					TextEditingController usernameController = TextEditingController();
+					TextEditingController lotController = TextEditingController();
+					TextEditingController nomController = TextEditingController();
+					TextEditingController psswController = TextEditingController();
 					return Expander(
 						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () => delete(superviseur),
 						icon: Icon(FluentIcons.calculator_multiply)),
+						trailing: IconButton( 
+							onPressed: () => setState(() {
+								usernameController.text = "";
+								lotController.text = "";
+								nomController.text = "";
+								psswController.text = "";
+							}),
+							icon: Icon(FluentIcons.refresh)
+						),
 						header: TextBox(
+							controller: usernameController,
 							placeholder: superviseur.nom_utilisateur,
 							onChanged: (newUsername) {
 								if (newUsername.isEmpty) {
@@ -242,20 +278,51 @@ class _SuperviseursState extends State<Superviseurs> {
 								modifiedSuperviseurs[superviseur.id] = superviseur;
 							},
 						), // TextBox
-						content: PasswordBox(
-							placeholder: pssw ?? "Nouveau mot de passe pour le superviseur...",
-							revealMode: PasswordRevealMode.peek,
-							onChanged: (newPassword) {
-								if (newPassword.isEmpty) {
-									superviseur.psswd = null;
-								}
-								else {
-									String password = sha256.convert(utf8.encode(newPassword)).toString();
-									superviseur.psswd = password;
-								}
-								modifiedSuperviseurs[superviseur.id] = superviseur;
-							},
-						), // PasswordBox
+						content: Column(
+						children: [
+							TextBox(
+								controller: lotController,
+								placeholder: superviseur.lot,
+								onChanged: (newLot) {
+									if (newLot.isNotEmpty) {
+										superviseur.lot = newLot;
+										modifiedSuperviseurs[superviseur.id] = superviseur;
+									}
+									else {
+										superviseur.lot = lot;
+									}
+								},
+							),
+							TextBox(
+								controller: nomController,
+								placeholder: superviseur.nom,
+								onChanged: (newNom) {
+									if (newNom.isNotEmpty) {
+										superviseur.nom = newNom;
+										modifiedSuperviseurs[superviseur.id] = superviseur;
+									}
+									else {
+										superviseur.nom = nom;
+									}
+								},
+							),
+							PasswordBox(
+								controller: psswController,
+								placeholder: pssw ?? "Nouveau mot de passe pour le superviseur...",
+								revealMode: PasswordRevealMode.peek,
+								onChanged: (newPassword) {
+									if (newPassword.isEmpty) {
+										superviseur.psswd = null;
+									}
+									else {
+										String password = sha256.convert(utf8.encode(newPassword)).toString();
+										superviseur.psswd = password;
+									}
+									modifiedSuperviseurs[superviseur.id] = superviseur;
+								},
+							), // PasswordBox
+						]
+					) // Column
 					); // Expander
 				}
 			),
