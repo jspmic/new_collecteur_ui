@@ -49,6 +49,7 @@ Future<bool> getFields() async {
 		inputs.forEach((inp) => collectedInputs.add(inp.toString()));
 		List type_transports = resp['type_transport'];
 		type_transports.forEach((type) => collectedTypeTransports.add(type.toString()));
+		print(inputs);
 	}
 	else {
 		return false;
