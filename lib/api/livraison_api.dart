@@ -27,10 +27,10 @@ Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId) async
 	}
 
 	List responseLivraisons = jsonDecode(response.body);
-	responseLivraisons.forEach((livraison) {
-		collectedLivraison.add(livraisonFromMap(livraison));
+	responseLivraisons.forEach((livraisonStr) {
+		Livraison l = livraisonFromJson(livraisonStr);
+		collectedLivraison.add(l);
 	});
-	print(collectedLivraison);
 	return true;
 }
 

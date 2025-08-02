@@ -1,16 +1,22 @@
+// To parse this JSON data, do
+//
+//     final livraison = livraisonFromJson(jsonString);
+
 import 'dart:convert';
+
 Livraison livraisonFromJson(String str) => Livraison.fromJson(json.decode(str));
-Livraison livraisonFromMap(Map<String, dynamic> _map) => Livraison.fromJson(_map);
+
+String livraisonToJson(Livraison data) => json.encode(data.toJson());
 
 class Livraison {
-	int id;
+    int id;
     String date;
     String plaque;
     String logisticOfficial;
     int numeroMouvement;
     int numeroJournalDuCamion;
-    String district;
     String stockCentralDepart;
+    String district;
     List<Boucle> boucle;
     String stockCentralRetour;
     String photoMvt;
@@ -26,8 +32,8 @@ class Livraison {
         required this.logisticOfficial,
         required this.numeroMouvement,
         required this.numeroJournalDuCamion,
-        required this.district,
         required this.stockCentralDepart,
+        required this.district,
         required this.boucle,
         required this.stockCentralRetour,
         required this.photoMvt,
@@ -44,13 +50,9 @@ class Livraison {
         logisticOfficial: json["logistic_official"],
         numeroMouvement: json["numero_mouvement"],
         numeroJournalDuCamion: json["numero_journal_du_camion"],
-        district: json["district"],
         stockCentralDepart: json["stock_central_depart"],
-		// To be fixed
-		boucle: json["boucle"].map<List>((value) {
-			return boucleFromMap(value);
-		}).toList(),
-		//
+        district: json["district"],
+        boucle: List<Boucle>.from(json["boucle"].map((x) => Boucle.fromJson(x))),
         stockCentralRetour: json["stock_central_retour"],
         photoMvt: json["photo_mvt"],
         photoJournal: json["photo_journal"],
@@ -58,9 +60,26 @@ class Livraison {
         user: json["user"],
         motif: json["motif"],
     );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "date": date,
+        "plaque": plaque,
+        "logistic_official": logisticOfficial,
+        "numero_mouvement": numeroMouvement,
+        "numero_journal_du_camion": numeroJournalDuCamion,
+        "stock_central_depart": stockCentralDepart,
+        "district": district,
+        "boucle": List<dynamic>.from(boucle.map((x) => x.toJson())),
+        "stock_central_retour": stockCentralRetour,
+        "photo_mvt": photoMvt,
+        "photo_journal": photoJournal,
+        "type_transport": typeTransport,
+        "user": user,
+        "motif": motif,
+    };
 }
 
-Boucle boucleFromMap(Map<String, String> map) => Boucle.fromMap(map);
 class Boucle {
     String livraisonRetour;
     String colline;
@@ -74,18 +93,17 @@ class Boucle {
         required this.quantite,
     });
 
-	factory Boucle.fromMap(Map<String, String> _map) => Boucle(
-			livraisonRetour: _map['livraison_retour'].toString(),
-			colline: _map['colline'].toString(),
-			input: _map['input'].toString(),
-			quantite: _map['quantite'].toString());
+    factory Boucle.fromJson(Map<String, dynamic> json) => Boucle(
+        livraisonRetour: json["livraison_retour"],
+        colline: json["colline"],
+        input: json["input"],
+        quantite: json["quantite"],
+    );
 
-	Map<String, String> toMap() {
-		return {
-			"livraison_retour": livraisonRetour,
-			"colline": colline,
-			"input": input,
-			"quantite": quantite,
-		};
-	}
+    Map<String, dynamic> toJson() => {
+        "livraison_retour": livraisonRetour,
+        "colline": colline,
+        "input": input,
+        "quantite": quantite,
+    };
 }
