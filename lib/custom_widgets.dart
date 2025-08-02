@@ -38,7 +38,7 @@ Future<bool> init() async {
 	try {
 		bool loadingSuperviseurs = await getSuperviseurs();
 		bool loadingFields = await getFields();
-		if (!loadingSuperviseurs) {
+		if (!loadingSuperviseurs || !loadingFields) {
 			return false;
 		}
 	} on Exception {
