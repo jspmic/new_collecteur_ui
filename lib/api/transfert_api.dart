@@ -42,11 +42,10 @@ Future<bool> removeTransfert(Transfert t) async {
       return http.Response("No connection", 404);
     });
     if (response.statusCode == 200) {
-      return true;
-    }
-	collectedTransfert.removeWhere((value) { return value==t; });
-    return false;
+		collectedTransfert.removeWhere((value) { return value.id == t.id; });
+	}
   } on http.ClientException {
     return false;
   }
+  return true;
 }
