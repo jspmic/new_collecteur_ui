@@ -16,6 +16,7 @@ class _SuperviseursState extends State<Superviseurs> {
 	bool isDeleting = false;
 	bool isModifying = false;
 	String lot = "Nouveau Lot pour le superviseur...";
+	String lotChoisie = "Lot d'opération du superviseur...";
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -98,6 +99,7 @@ class _SuperviseursState extends State<Superviseurs> {
 		TextEditingController lot = TextEditingController();
 		TextEditingController alias = TextEditingController();
 		Superviseur s = Superviseur(nom_utilisateur: "", id: 0, lot: "", nom: "");
+
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
 				title: const Text("Ajouter un superviseur"),
@@ -117,10 +119,19 @@ class _SuperviseursState extends State<Superviseurs> {
 						SizedBox(height: MediaQuery.of(context).size.height/25),
 						Divider(),
 						SizedBox(height: MediaQuery.of(context).size.height/25),
-						TextBox(
-							controller: lot,
-							placeholder: "Lot d'opération du superviseur...",
-						),
+						DropDownButton(
+							title: Text(lotChoisie),
+							items: superviseursList.isEmpty ? [
+								MenuFlyoutItem(text: Text(""), onPressed: (){})
+							] : lots.map<MenuFlyoutItem>((_lot) {
+								return MenuFlyoutItem(text: Text(_lot.nom), onPressed: () {
+									setState(() {
+										lot.text = _lot.nom;
+										lotChoisie = _lot.nom;
+									});
+								});
+							}).toList(),
+						), // DropDownButton
 						SizedBox(height: MediaQuery.of(context).size.height/25),
 						Divider(),
 						SizedBox(height: MediaQuery.of(context).size.height/25),
@@ -135,8 +146,7 @@ class _SuperviseursState extends State<Superviseurs> {
 					Button(
 						onPressed: () async {
 							if (pssw.text.isEmpty || nom.text.isEmpty || alias.text.isEmpty || lot.text.isEmpty) {
-								return;
-							}
+								return; }
 							String password = sha256.convert(utf8.encode(pssw.text)).toString();
 							s.nom = nom.text;
 							s.psswd = password;
