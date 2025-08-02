@@ -216,7 +216,7 @@ Widget transfertTable({required String date, String? dateFin}) {
   header = dateFin == null ?
   "Transferts du $date" : "Transferts du $date au $dateFin";
 
-  if (collectedTransfert.isEmpty && collectedLivraison.isEmpty) {
+  if (collectedTransfert.isEmpty) {
   	return Text("Pas de données");
   }
   return SafeArea(
