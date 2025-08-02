@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
+import 'package:new_collecteur_ui/api/livraison_api.dart';
 import 'package:new_collecteur_ui/screens/afficher_mouvements.dart';
 import 'package:new_collecteur_ui/globals.dart';
 
@@ -59,6 +60,8 @@ class _MouvementsState extends State<Mouvements> {
 			isPopulating = true;
 		});
 		bool retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
+		bool testingLivraison = await getLivraisons(dateDebut, dateFin, userId);
+
 		setState(() {
 			isPopulating = false;
 		});
@@ -119,6 +122,8 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Date début:"),
 								Divider(),
 								DatePicker(
+									startDate: DateTime(2023),
+									endDate: DateTime(2090),
 									header: "Choisissez une date",
 									selected: dateDebut,
 									onChanged: (date) => setState(() => dateDebut = date ),
@@ -135,6 +140,8 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Date fin:"),
 								Divider(),
 								DatePicker(
+									startDate: DateTime(2004),
+									endDate: DateTime(2090),
 									header: "Choisissez une date",
 									selected: dateFin,
 									onChanged: (date) => setState(() => dateFin = date ),
@@ -188,7 +195,7 @@ class _MouvementsState extends State<Mouvements> {
 											});
 										});
 									}).toList(),
-								)
+								) // DropDownButton
 							],
 						), // Row
 						SizedBox(
