@@ -27,17 +27,18 @@ Future<bool> getFields() async {
 				nom: district,
 				collines: _districts[district]
 			);
+			districts.add(d);
 			collectedDistricts[d.nom] = d;
 		}
 		for (String lot in _lots.keys) {
 			List lotDistricts = _lots[lot];
-			List<District> districts = [];
+			List<District> _districts = [];
 			for (String lotDistrict in lotDistricts) {
-				districts.add(collectedDistricts[lotDistrict]!);
+				_districts.add(collectedDistricts[lotDistrict]!);
 			}
 			Lot l = Lot(
 				nom: lot,
-				districts: districts
+				districts: _districts
 			);
 			lots.add(l);
 		}

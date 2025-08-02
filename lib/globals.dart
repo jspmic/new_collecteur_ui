@@ -24,6 +24,7 @@ List<String> collectedTypeTransports = [];
 
 // Typical Fields collected from the API
 List<Lot> lots = [];
+List<District> districts = []; // districts in their totality
 
 // Field changed
 Map<int, Lot> lotsChanged = {};
