@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/screens/tables/transfert_table.dart';
+import 'package:new_collecteur_ui/screens/tables/livraison_table.dart';
 
 class AfficherMouvements extends StatefulWidget {
   final String dateDebut;
@@ -33,7 +34,7 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 			),
 			content: widget.program == "Transfert" ? 
 					transfertTable(date: widget.dateDebut, dateFin: widget.dateFin)
-					: Text("Livraison"),
+					: livraisonTable(date: widget.dateDebut, dateFin: widget.dateFin),
 		);
 	  }
 }
