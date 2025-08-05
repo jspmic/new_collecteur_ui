@@ -31,8 +31,8 @@ Future<bool> getTransferts(DateTime? _date1, DateTime? _date2, int userId) async
 	return true;
 }
 
-Future<bool> removeTransfert(Transfert t) async {
-  var url = Uri.parse("$HOST/api/transferts?id=${t.id}");
+Future<bool> removeTransfert(int id) async {
+  var url = Uri.parse("$HOST/api/transferts?id=$id");
   try {
     http.Response response = await http.delete(url, headers: {
       "x-api-key": COLLECTEUR_SECRET,
@@ -42,7 +42,7 @@ Future<bool> removeTransfert(Transfert t) async {
       return http.Response("No connection", 404);
     });
     if (response.statusCode == 200) {
-		collectedTransfert.removeWhere((value) { return value.id == t.id; });
+		collectedTransfert.removeWhere((value) { return value.id == id; });
 	}
   } on http.ClientException {
     return false;

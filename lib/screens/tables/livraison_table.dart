@@ -5,43 +5,7 @@ import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
 import 'package:new_collecteur_ui/api/livraison_api.dart';
 
-// These two functions save particular fields of a Livraison or Transfert
-void saveBoucle(String id, String boucleId, String columnName, String newValue){
-  Livraison? concernedLivraison;
-  for (Livraison _concerned in collectedLivraison){
-    if (_concerned.id.toString() == id){
-      concernedLivraison = _concerned;
-      break;
-    }
-  }
-  if (concernedLivraison == null){
-    return;
-  }
-	// Making a copy of the `boucle` to not overwrite it by mistake
-	List<Boucle> boucle = concernedLivraison.boucle;
-	boucle[boucleId][columnName] = newValue;
-  modifiedLivraisons.containsKey(id) ?
-      modifiedLivraisons[id]!.addAll({"boucle": jsonEncode(boucle)})
-	: modifiedLivraisons[id] = {"boucle": jsonEncode(boucle)};
-}
-
-// This function saves a certain movement to the new content
-void saveModified(String movement, String id, Map<String, String> content, {int? boucleId}){
-  if (movement == "Livraison"){
-	modifiedLivraisons.containsKey(id) ? modifiedLivraisons[id]!.addAll(content)
-	: modifiedLivraisons[id] = content;
-  }
-  else {
-	modifiedTransferts.containsKey(id) ? modifiedTransferts[id]!.addAll(content)
-	: modifiedTransferts[id] = content;
-  }
-}
-
-// Interface to the true modifier for easy and comprehensible arguments
-void saveChange(String movement, {required int id,
-				required String columnName, required String newValue}){
-  saveModified(movement, id.toString(), {columnName: newValue});
-}
+final fluent.GlobalKey<fluent.NavigatorState> navigatorKey = fluent.GlobalKey<fluent.NavigatorState>();
 
 Map<String, Map<String, String>> modifiedLivraisons = {};
 
@@ -50,7 +14,22 @@ String formatStock(String stock){
   return stock.replaceAll('_', ' ');
 }
 
+class DeletePopUp extends fluent.StatefulWidget {
+  const DeletePopUp({super.key});
+
+  @override
+  State<DeletePopUp> createState() => _DeletePopUpState();
+}
+
+class _DeletePopUpState extends fluent.State<DeletePopUp> {
+  @override
+  fluent.Widget build(fluent.BuildContext context) {
+    return const fluent.Text("Hello visible");
+  }
+}
+
 // Controllers for this kind of table
+Map<int, TextEditingController> idControllers = {};
 Map<int, TextEditingController> dateControllers = {};
 Map<int, TextEditingController> logisticOfficialsControllers = {};
 Map<int, TextEditingController> numeroMvtControllers = {};
@@ -72,7 +51,7 @@ Map<int, String> keys = {};
 List<DataColumn> _createLivraisonColumns() {
   return [
     const DataColumn(
-        label: Text("", style: TextStyle(fontWeight: FontWeight.bold))),
+        label: Text("Id", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
         label: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
@@ -121,10 +100,11 @@ List<DataColumn> _createLivraisonColumns() {
   ];
 }
 
-List<DataRow> _createLivraisonRows() {
+List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
   List<Livraison> _data = List.from(collectedLivraison);
   List<DataRow> rows = [];
   _data.map((e){
+    idControllers[e.id] = TextEditingController(text: e.id.toString());
     dateControllers[e.id] = TextEditingController(text: e.date);
     plaqueControllers[e.id] = TextEditingController(text: e.plaque);
     logisticOfficialsControllers[e.id] = TextEditingController(text: e.logisticOfficial);
@@ -145,7 +125,10 @@ List<DataRow> _createLivraisonRows() {
 	  inputControllers[key] = TextEditingController(text: b.input);
 	  quantiteControllers[key] = TextEditingController(text: b.quantite);
       DataRow row = DataRow(cells: [
-        DataCell(IconButton(icon: const Icon(Icons.remove, color: Colors.red), onPressed: (){})),
+        DataCell(TextField(controller: idControllers[e.id],
+		  enabled: false,
+		  decoration: const InputDecoration(border: InputBorder.none))),
+
         DataCell(TextField(controller: dateControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none)), 
 		  showEditIcon: true),
@@ -216,9 +199,60 @@ List<DataRow> _createLivraisonRows() {
   return rows;
 }
 
+// void popItUp(BuildContext context, String mssg) async {
+// 	await showDialog(context: context,
+// 		builder: (context) => ContentDialog(
+// 			title: const Text("Information"),
+// 			content: Text(mssg),
+// 			actions: [
+// 				Button(
+// 					onPressed: () => Navigator.pop(context),
+// 					child: const Text("Ok"),
+// 				),
+// 			],
+// 	));
+// }
+
+// void apply(BuildContext context) async {
+// 	await showDialog(context: context,
+// 		builder: (context) => fluent.ContentDialog(
+// 			title: const Text("Confirmation"),
+// 			content: const Text("Appliquer les changements?"),
+// 			actions: [
+// 				fluent.Button(
+// 					onPressed: () async {
+// 						Navigator.pop(context);
+// 						modifiedSuperviseurs.forEach((index, sup) async {
+// 							bool status = await modifySuperviseurs(sup);
+// 							if (status) {
+// 								popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
+// 							}
+// 							else {
+// 								popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
+// 							}
+// 						});
+// 						modifiedSuperviseurs = {};
+// 					},
+// 					child: const Text("Oui"),
+// 				),
+// 				fluent.Button(
+// 					onPressed: () => Navigator.pop(context),
+// 					child: const Text("Non"),
+// 				),
+// 			],
+// 		)
+// 	);
+// }
+
 
 class LivraisonData extends DataTableSource{
-  List<DataRow> livraisonRows = _createLivraisonRows();
+  fluent.BuildContext context;
+
+  late List<DataRow> livraisonRows;
+
+  LivraisonData({required this.context}) {
+	  livraisonRows = _createLivraisonRows(context);
+  }
   @override
   DataRow? getRow(int index) {
     return livraisonRows[index];
@@ -231,31 +265,47 @@ class LivraisonData extends DataTableSource{
   int get selectedRowCount => 0;
 }
 
+class livraisonTable extends fluent.StatefulWidget {
+  final String date;
+  final String? dateFin;
+  const livraisonTable({super.key, required this.date, this.dateFin});
 
-Widget livraisonTable({required String date, String? dateFin}) {
-  if (collectedLivraison.isEmpty){
-    return const Center(child: Text("Pas de données", style: TextStyle(color: Colors.grey)));
-  }
+  @override
+  State<livraisonTable> createState() => _livraisonTableState();
+}
+
+class _livraisonTableState extends fluent.State<livraisonTable> {
   fluent.ScrollController _horizontalController = fluent.ScrollController();
-  String header = dateFin == null ?
-  "Livraisons du $date" : "Livraisons du $date au $dateFin";
+  bool isVisible = false;
 
-  if (collectedLivraison.isEmpty) {
-  	return Text("Pas de données");
+  void toggleVisibility() => isVisible = !isVisible;
+
+  @override
+  fluent.Widget build(fluent.BuildContext context) {
+	   if (collectedLivraison.isEmpty) {
+	   	return Center(child: const Text("Pas de données"));
+	   }
+	  String header = widget.dateFin == null ?
+	  "Livraisons du ${widget.date}" : "Livraisons du ${widget.date} au ${widget.dateFin}";
+	  return fluent.SafeArea(
+		  child: fluent.SingleChildScrollView(
+			  scrollDirection: fluent.Axis.vertical,
+			  child: fluent.Column(
+			  children: [
+				  fluent.Scrollbar(
+					  controller: _horizontalController,
+					  thumbVisibility: true,
+					  child: PaginatedDataTable(
+						primary: false,
+						controller: _horizontalController,
+						showFirstLastButtons: true,
+						columns: _createLivraisonColumns(), source: LivraisonData(context: context),
+						header: fluent.Center(child: fluent.Text(header)),
+						rowsPerPage: collectedLivraison.length >= 8 ? 8 : collectedLivraison.length,
+					  )), // ScrollBar
+				]
+			  ) // Column
+		  ) // SingleChildScrollView
+	  ); // SafeArea
   }
-  return fluent.SafeArea(
-      child: fluent.SingleChildScrollView(
-          scrollDirection: fluent.Axis.vertical,
-          child: fluent.Scrollbar(
-              controller: _horizontalController,
-              thumbVisibility: true,
-              child: PaginatedDataTable(
-                primary: false,
-                controller: _horizontalController,
-                showFirstLastButtons: true,
-                columns: _createLivraisonColumns(), source: LivraisonData(),
-                header: fluent.Center(child: fluent.Text(header)),
-                rowsPerPage: collectedLivraison.length >= 8 ? 8 : collectedLivraison.length,
-              ))
-      ));
-  }
+}

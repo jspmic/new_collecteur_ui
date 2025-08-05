@@ -10,8 +10,7 @@ String HOST = dotenv.env["HOST"].toString();
 String COLLECTEUR_SECRET = dotenv.env["COLLECTOR_SECRET"].toString();
 String CODE = dotenv.env["CODE"].toString();
 
-Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId) async {
-	Uri uri;
+Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId) async { Uri uri;
 	String date1 = formatDate(_date1);
 	String date2 = formatDate(_date2);
 	if (date2.isNotEmpty) {
@@ -34,8 +33,8 @@ Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId) async
 	return true;
 }
 
-Future<bool> removeLivraison(Livraison l) async {
-  var url = Uri.parse("$HOST/api/livraisons?id=${l.id}");
+Future<bool> removeLivraison(int id) async {
+  var url = Uri.parse("$HOST/api/livraisons?id=$id");
   try {
     http.Response response = await http.delete(url, headers: {
       "x-api-key": COLLECTEUR_SECRET,
@@ -45,7 +44,7 @@ Future<bool> removeLivraison(Livraison l) async {
       return http.Response("No connection", 404);
     });
     if (response.statusCode == 200) {
-		collectedLivraison.removeWhere((value) { return value.id == l.id; });
+		collectedLivraison.removeWhere((value) { return value.id == id; });
     }
   } on http.ClientException {
     return false;

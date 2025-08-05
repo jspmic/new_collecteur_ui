@@ -3,52 +3,10 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/transfert.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
-
-class dialogAlertWidget extends StatefulWidget {
-  final Transfert t;
-  const dialogAlertWidget({super.key, required this.t});
-
-  @override
-  State<dialogAlertWidget> createState() => _dialogAlertWidgetState();
-}
-
-class _dialogAlertWidgetState extends State<dialogAlertWidget> {
-  bool isLoading = false;
-  Color status = fluent.Colors.red;
-
-  void deleteMovement() async {
-    setState(() {
-      isLoading = true;
-    });
-    bool codeStatus = await removeTransfert(widget.t);
-    if (codeStatus){
-      status = Colors.green;
-    }
-    else {
-      status = Colors.red;
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Attention!"),
-      content: const Text("Êtes-vous sûr de vouloir supprimer ce mouvement?"),
-      actions: [
-        isLoading ? const CircularProgressIndicator() :
-        ElevatedButton(onPressed: () {
-          deleteMovement();
-        }, child: Text("Accepter", style: TextStyle(color: status))),
-        ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("Fermer"))
-      ],
-    );
-  }
-}
+import 'package:new_collecteur_ui/screens/tables/livraison_table.dart';
 
 // Global controllers for Livraison and Transfert
+Map<int, TextEditingController> idControllers = {};
 Map<int, TextEditingController> dateControllers = {};
 Map<int, TextEditingController> logisticOfficialsControllers = {};
 Map<int, TextEditingController> numeroMvtControllers = {};
@@ -80,7 +38,7 @@ TextEditingController printStockSuivants(Transfert objTransf){
 List<DataColumn> _createTransfertColumns() {
   return [
     const DataColumn(
-        label: Text("", style: TextStyle(fontWeight: FontWeight.bold))),
+        label: Text("Id", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
         label: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
@@ -120,6 +78,7 @@ List<DataColumn> _createTransfertColumns() {
 List<DataRow> _createTransfertRows() {
   List<Transfert> data = List.from(collectedTransfert);
   return data.map((e) {
+    idControllers[e.id] = TextEditingController(text: e.id.toString());
     dateControllers[e.id] = TextEditingController(text: e.date);
     plaqueControllers[e.id] = TextEditingController(text: e.plaque);
     logisticOfficialsControllers[e.id] = TextEditingController(text: e.logisticOfficial);
@@ -133,10 +92,9 @@ List<DataRow> _createTransfertRows() {
     photoJournalControllers[e.id] = TextEditingController(text: e.photoJournal);
     printStockSuivants(e);
     return DataRow(cells: [
-	  DataCell(
-	  	fluent.IconButton(onPressed: () => dialogAlertWidget(t: e),
-		icon: Icon(fluent.FluentIcons.calculator_multiply))
-	  ),
+	  DataCell(TextField(controller: idControllers[e.id],
+		decoration: const InputDecoration(border: InputBorder.none)),
+		showEditIcon: true),
 
 	  DataCell(TextField(controller: dateControllers[e.id],
 		decoration: const InputDecoration(border: InputBorder.none)),
@@ -217,7 +175,7 @@ Widget transfertTable({required String date, String? dateFin}) {
   "Transferts du $date" : "Transferts du $date au $dateFin";
 
   if (collectedTransfert.isEmpty) {
-  	return Text("Pas de données");
+  	return Center(child: Text("Pas de données"));
   }
   return SafeArea(
       child: SingleChildScrollView(
