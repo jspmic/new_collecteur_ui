@@ -5,6 +5,44 @@ import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
 import 'package:new_collecteur_ui/api/livraison_api.dart';
 
+// These two functions save particular fields of a Livraison or Transfert
+void saveBoucle(String id, String boucleId, String columnName, String newValue){
+  Livraison? concernedLivraison;
+  for (Livraison _concerned in collectedLivraison){
+    if (_concerned.id.toString() == id){
+      concernedLivraison = _concerned;
+      break;
+    }
+  }
+  if (concernedLivraison == null){
+    return;
+  }
+	// Making a copy of the `boucle` to not overwrite it by mistake
+	List<Boucle> boucle = concernedLivraison.boucle;
+	boucle[boucleId][columnName] = newValue;
+  modifiedLivraisons.containsKey(id) ?
+      modifiedLivraisons[id]!.addAll({"boucle": jsonEncode(boucle)})
+	: modifiedLivraisons[id] = {"boucle": jsonEncode(boucle)};
+}
+
+// This function saves a certain movement to the new content
+void saveModified(String movement, String id, Map<String, String> content, {int? boucleId}){
+  if (movement == "Livraison"){
+	modifiedLivraisons.containsKey(id) ? modifiedLivraisons[id]!.addAll(content)
+	: modifiedLivraisons[id] = content;
+  }
+  else {
+	modifiedTransferts.containsKey(id) ? modifiedTransferts[id]!.addAll(content)
+	: modifiedTransferts[id] = content;
+  }
+}
+
+// Interface to the true modifier for easy and comprehensible arguments
+void saveChange(String movement, {required int id,
+				required String columnName, required String newValue}){
+  saveModified(movement, id.toString(), {columnName: newValue});
+}
+
 Map<String, Map<String, String>> modifiedLivraisons = {};
 
 // Function to format stock central
