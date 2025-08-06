@@ -7,6 +7,7 @@ import 'package:new_collecteur_ui/screens/tables/livraison_table.dart';
 
 // Global controllers for Livraison and Transfert
 Map<int, TextEditingController> idControllers = {};
+Map<int, TextEditingController> userControllers = {};
 Map<int, TextEditingController> dateControllers = {};
 Map<int, TextEditingController> logisticOfficialsControllers = {};
 Map<int, TextEditingController> numeroMvtControllers = {};
@@ -39,6 +40,8 @@ List<DataColumn> _createTransfertColumns() {
   return [
     const DataColumn(
         label: Text("Id", style: TextStyle(fontWeight: FontWeight.bold))),
+    const DataColumn(
+        label: Text("Superviseur", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
         label: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
@@ -79,6 +82,7 @@ List<DataRow> _createTransfertRows() {
   List<Transfert> data = List.from(collectedTransfert);
   return data.map((e) {
     idControllers[e.id] = TextEditingController(text: e.id.toString());
+    userControllers[e.id] = TextEditingController(text: e.user);
     dateControllers[e.id] = TextEditingController(text: e.date);
     plaqueControllers[e.id] = TextEditingController(text: e.plaque);
     logisticOfficialsControllers[e.id] = TextEditingController(text: e.logisticOfficial);
@@ -93,8 +97,14 @@ List<DataRow> _createTransfertRows() {
     printStockSuivants(e);
     return DataRow(cells: [
 	  DataCell(TextField(controller: idControllers[e.id],
-		decoration: const InputDecoration(border: InputBorder.none)),
-		showEditIcon: true),
+		decoration: const InputDecoration(border: InputBorder.none),
+		enabled: false)
+		),
+
+	  DataCell(TextField(controller: userControllers[e.id],
+		decoration: const InputDecoration(border: InputBorder.none),
+		enabled: false),
+		),
 
 	  DataCell(TextField(controller: dateControllers[e.id],
 		decoration: const InputDecoration(border: InputBorder.none)),

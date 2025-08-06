@@ -30,6 +30,7 @@ class _DeletePopUpState extends fluent.State<DeletePopUp> {
 
 // Controllers for this kind of table
 Map<int, TextEditingController> idControllers = {};
+Map<int, TextEditingController> userControllers = {};
 Map<int, TextEditingController> dateControllers = {};
 Map<int, TextEditingController> logisticOfficialsControllers = {};
 Map<int, TextEditingController> numeroMvtControllers = {};
@@ -52,6 +53,8 @@ List<DataColumn> _createLivraisonColumns() {
   return [
     const DataColumn(
         label: Text("Id", style: TextStyle(fontWeight: FontWeight.bold))),
+    const DataColumn(
+        label: Text("Superviseur", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
         label: Text("Date", style: TextStyle(fontWeight: FontWeight.bold))),
     const DataColumn(
@@ -105,6 +108,7 @@ List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
   List<DataRow> rows = [];
   _data.map((e){
     idControllers[e.id] = TextEditingController(text: e.id.toString());
+    userControllers[e.id] = TextEditingController(text: e.user);
     dateControllers[e.id] = TextEditingController(text: e.date);
     plaqueControllers[e.id] = TextEditingController(text: e.plaque);
     logisticOfficialsControllers[e.id] = TextEditingController(text: e.logisticOfficial);
@@ -126,6 +130,10 @@ List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
 	  quantiteControllers[key] = TextEditingController(text: b.quantite);
       DataRow row = DataRow(cells: [
         DataCell(TextField(controller: idControllers[e.id],
+		  enabled: false,
+		  decoration: const InputDecoration(border: InputBorder.none))),
+
+        DataCell(TextField(controller: userControllers[e.id],
 		  enabled: false,
 		  decoration: const InputDecoration(border: InputBorder.none))),
 
