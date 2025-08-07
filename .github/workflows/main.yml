@@ -18,7 +18,7 @@ jobs:
         with:
           # Fix: Use a Flutter version that includes Dart >= 3.8.1.
           # As of August 2024, use '3.22.1' or newer, ideally the latest stable.
-          flutter-version: '3.22.1'
+          flutter-version: '3.32.4'
           channel: 'stable'
 
       - name: Install dependencies
