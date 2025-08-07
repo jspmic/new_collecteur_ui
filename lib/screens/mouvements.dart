@@ -2,6 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
 import 'package:new_collecteur_ui/api/livraison_api.dart';
+import 'package:new_collecteur_ui/models/district.dart';
+import 'package:new_collecteur_ui/models/lot.dart';
 import 'package:new_collecteur_ui/screens/afficher_mouvements.dart';
 import 'package:new_collecteur_ui/globals.dart';
 
@@ -16,11 +18,13 @@ class _MouvementsState extends State<Mouvements> {
 	DateTime? dateDebut;
 	DateTime? dateFin;
 	String program = "Program";
+
 	String district = "District";
+
 	String superviseur = "Superviseur";
 	bool isCharging = false;
 	bool isPopulating = false;
-	int userId = 0;
+	int userId = -1;
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -46,21 +50,28 @@ class _MouvementsState extends State<Mouvements> {
 			popItUp(context, "Veuillez choisir le type de mouvements");
 			return;
 		}
-		if (superviseur == "Superviseur") {
-			popItUp(context, "Veuillez choisir un superviseur");
-			return;
-		}
 
-		if (district == "District" && program == "Livraison") {
-			popItUp(context, "Veuillez choisir un district");
+		if (district == "District" && userId == -1) {
+			popItUp(context, "Veuillez choisir un district ou un superviseur");
 			return;
 		}
 
 		setState(() {
 			isPopulating = true;
 		});
-		bool retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
-		bool testingLivraison = await getLivraisons(dateDebut, dateFin, userId);
+		bool retrievingStatus = false;
+		if (program == "Transfert") {
+			retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
+		}
+		else {
+			if (district != "District") {
+				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId, district);
+			}
+			else {
+				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId, "");
+			}
+
+		}
 
 		setState(() {
 			isPopulating = false;
@@ -110,7 +121,8 @@ class _MouvementsState extends State<Mouvements> {
 				]),
 				title: const Text("Mouvements")
 			),
-			content: Column(
+			content: SingleChildScrollView(
+			child: Column(
 					crossAxisAlignment: CrossAxisAlignment.center,
 					children: [
 						SizedBox(
@@ -140,7 +152,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Date fin:"),
 								Divider(),
 								DatePicker(
-									startDate: DateTime(2004),
+									startDate: DateTime(2023),
 									endDate: DateTime(2090),
 									header: "Choisissez une date",
 									selected: dateFin,
@@ -179,15 +191,37 @@ class _MouvementsState extends State<Mouvements> {
 						SizedBox(
 							height: MediaQuery.of(context).size.height/15,
 						), // SizedBox
+
+						Row(
+							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+							children: [
+								const Text("District:"),
+								DropDownButton(
+									title: Text(district),
+									items: districts.isEmpty ? [
+										MenuFlyoutItem(text: Text(""), onPressed: (){})
+									] : districts.map<MenuFlyoutItem>((_district) {
+										return MenuFlyoutItem(text: Text(_district.nom), onPressed: () {
+											setState(() {
+												district = _district.nom;
+											});
+										});
+									}).toList(),
+								) // DropDownButton
+							],
+						), // Row
+						SizedBox(
+							height: MediaQuery.of(context).size.height/15,
+						), // SizedBox
+
 						Row(
 							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 							children: [
 								const Text("Superviseur:"),
 								DropDownButton(
 									title: Text(superviseur),
-									items: superviseursList.isEmpty ? [
-										MenuFlyoutItem(text: Text(""), onPressed: (){})
-									] : superviseursList.map<MenuFlyoutItem>((superv) {
+									items: superviseursList.isEmpty ? [MenuFlyoutItem(text: Text("Aucun"), onPressed: () => userId = -1)]
+									: superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {
 												userId = superv.id;
@@ -204,9 +238,13 @@ class _MouvementsState extends State<Mouvements> {
 						isPopulating ? ProgressRing() : Button(
 							onPressed: () => getMouvements(),
 							child: const Text("Continuer", style: TextStyle(fontSize: 22)),
-						)
+						),
+						SizedBox(
+							height: MediaQuery.of(context).size.height/15,
+						), // SizedBox
 					],
-				)
+				) // Column
+			) // SingleChildScrollView
 		); // ScaffoldPage
 	  }
 }
