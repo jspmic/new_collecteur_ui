@@ -10,15 +10,24 @@ String HOST = dotenv.env["HOST"].toString();
 String COLLECTEUR_SECRET = dotenv.env["COLLECTOR_SECRET"].toString();
 String CODE = dotenv.env["CODE"].toString();
 
-Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId) async { Uri uri;
+Future<bool> getLivraisons(DateTime? _date1, DateTime? _date2, int userId, String district) async { Uri uri;
 	String date1 = formatDate(_date1);
+	String url = "$HOST/api/livraisons?date=$date1"; //?date=$date1&date2=$date2&userId=$userId&district=$district";
 	String date2 = formatDate(_date2);
+
+	if (userId != -1) {
+		url += "&userId=$userId";
+	}
+
 	if (date2.isNotEmpty) {
-		uri = Uri.parse("$HOST/api/livraisons?date=$date1&date2=$date2&userId=$userId");
+		url += "&date2=$date2";
 	}
-	else {
-		uri = Uri.parse("$HOST/api/livraisons?date=$date1&userId=$userId");
+
+	if (district.isNotEmpty) {
+		url += "&district=$district";
 	}
+
+	uri = Uri.parse(url);
 
 	http.Response response = await http.get(uri);
 	if (response.statusCode != 200) {
