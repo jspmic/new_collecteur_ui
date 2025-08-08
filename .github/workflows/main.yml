@@ -20,6 +20,12 @@ jobs:
           # As of August 2024, use '3.22.1' or newer, ideally the latest stable.
           flutter-version: '3.32.4'
           channel: 'stable'
+          
+      - name: Write secrets to .env file
+        run: |
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" >> .env
+          echo "CODE=${{ secrets.CODE }}" >> .env
+          echo "HOST=${{ secrets.HOST }}" >> .env
 
       - name: Install dependencies
         run: flutter pub get
