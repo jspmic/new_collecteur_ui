@@ -10,6 +10,10 @@ void clearGlobals() {
 	// lots = [];
 }
 
+String formatStock(String stock){
+  return stock.replaceAll('_', ' ');
+}
+
 void initializeGlobals() {
 	superviseursList = [Superviseur(id: 0, nom_utilisateur: "", nom: "", lot: "")];
 }

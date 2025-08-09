@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:new_collecteur_ui/api/livraison_api.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
+import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/screens/tables/transfert_table.dart';
 import 'package:new_collecteur_ui/screens/tables/livraison_table.dart';
 import 'package:intl/intl.dart';

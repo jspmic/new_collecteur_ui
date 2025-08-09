@@ -2,17 +2,13 @@ import 'dart:convert';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:new_collecteur_ui/globals.dart';
+import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
 import 'package:new_collecteur_ui/api/livraison_api.dart';
 
 final fluent.GlobalKey<fluent.NavigatorState> navigatorKey = fluent.GlobalKey<fluent.NavigatorState>();
 
 Map<String, Map<String, String>> modifiedLivraisons = {};
-
-// Function to format stock central
-String formatStock(String stock){
-  return stock.replaceAll('_', ' ');
-}
 
 class DeletePopUp extends fluent.StatefulWidget {
   const DeletePopUp({super.key});
