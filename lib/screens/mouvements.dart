@@ -51,11 +51,6 @@ class _MouvementsState extends State<Mouvements> {
 			return;
 		}
 
-		if (district == "District" && userId == -1) {
-			popItUp(context, "Veuillez choisir un district ou un superviseur");
-			return;
-		}
-
 		setState(() {
 			isPopulating = true;
 		});
