@@ -135,7 +135,6 @@ class _SuperviseursState extends State<Superviseurs> {
 							superviseursList: superviseursList,
 							onAdd: addSuperviseurs)
 						);
-						setState(() {});
 					},
 					label: statusAddConfirmation ? ProgressRing() : Text("Ajouter un superviseur"),
 					icon: Icon(FluentIcons.add)
