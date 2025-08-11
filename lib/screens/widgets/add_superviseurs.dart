@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart' as material;
 import 'package:new_collecteur_ui/models/superviseur.dart';
-import 'package:new_collecteur_ui/api/superviseur_api.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class AddSuperviseurDialog extends StatefulWidget {
