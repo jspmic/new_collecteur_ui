@@ -2,8 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
 import 'package:new_collecteur_ui/api/livraison_api.dart';
-import 'package:new_collecteur_ui/models/district.dart';
-import 'package:new_collecteur_ui/models/lot.dart';
 import 'package:new_collecteur_ui/screens/afficher_mouvements.dart';
 import 'package:new_collecteur_ui/globals.dart';
 
@@ -19,7 +17,6 @@ class _MouvementsState extends State<Mouvements> {
 	DateTime? dateFin;
 	String program = "Program";
 
-	String district = "District";
 
 	String superviseur = "Superviseur";
 	bool isCharging = false;
