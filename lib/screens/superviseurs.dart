@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
 import 'package:new_collecteur_ui/screens/widgets/add_superviseurs.dart';
+import 'package:new_collecteur_ui/screens/widgets/remove_superviseur.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 
 class Superviseurs extends StatefulWidget {
@@ -193,21 +194,12 @@ class _SuperviseursState extends State<Superviseurs> {
 					TextEditingController nomController = TextEditingController();
 					TextEditingController psswController = TextEditingController();
 					return Expander(
-						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () async {
-							delete(superviseur);
-							if (statusDeleteConfirmation && mounted) {
-								bool deleteStatus = await deleteSuperviseurs(superviseur);
-								if (deleteStatus && mounted) {
-									deletePopItUp(context, "Superviseur supprimé");
-								}
-								else if (!deleteStatus && mounted) {
-									deletePopItUp(context, "Superviseur non supprimé");
-								}
-								setState(() {
-									isDeleting = false;
-								});
-							}
-
+						leading: IconButton(onPressed: () async {
+							showDialog(context: context,
+								builder: (_) => DeleteSuperviseurDialog(
+								superviseur: superviseur,
+								onDelete: deleteSuperviseurs)
+							);
 						},
 						icon: Icon(FluentIcons.calculator_multiply)),
 						trailing: IconButton( 
