@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
+import 'package:new_collecteur_ui/screens/widgets/add_superviseurs.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 
 class Superviseurs extends StatefulWidget {
@@ -81,92 +82,6 @@ class _SuperviseursState extends State<Superviseurs> {
 		);
 	}
 
-	void addSuperviseur(BuildContext context) async {
-		TextEditingController pssw = TextEditingController();
-		TextEditingController nom = TextEditingController();
-		TextEditingController lot = TextEditingController();
-		TextEditingController alias = TextEditingController();
-
-		await showDialog(context: context,
-			builder: (context) => ContentDialog(
-				title: const Text("Ajouter un superviseur"),
-				content: Column(
-					mainAxisAlignment: MainAxisAlignment.start,
-					mainAxisSize: MainAxisSize.min,
-					children: [
-						TextBox(
-							controller: nom,
-							placeholder: "Nom complet du superviseur...",
-						),
-						SizedBox(height: MediaQuery.of(context).size.height/25),
-						TextBox(
-							controller: alias,
-							placeholder: "Alias du superviseur...",
-						),
-						SizedBox(height: MediaQuery.of(context).size.height/25),
-						Divider(),
-						SizedBox(height: MediaQuery.of(context).size.height/25),
-						DropDownButton(
-							title: Text(lotChoisie),
-							items: superviseursList.isEmpty ? [
-								MenuFlyoutItem(text: Text(""), onPressed: (){})
-							] : lots.map<MenuFlyoutItem>((_lot) {
-								return MenuFlyoutItem(text: Text(_lot.nom), onPressed: () {
-									setState(() {
-										lot.text = _lot.nom;
-										lotChoisie = _lot.nom;
-									});
-								});
-							}).toList(),
-						), // DropDownButton
-						SizedBox(height: MediaQuery.of(context).size.height/25),
-						Divider(),
-						SizedBox(height: MediaQuery.of(context).size.height/25),
-						PasswordBox(
-							controller: pssw,
-							revealMode: PasswordRevealMode.peek,
-							placeholder: "Mot de passe du superviseur...",
-						),
-					],
-				), // Column
-				actions: [
-					Button(
-						onPressed: () async {
-							if (pssw.text.isEmpty || nom.text.isEmpty || alias.text.isEmpty || lot.text.isEmpty) {
-								return; }
-							setState(() {
-							  statusAddConfirmation = true;
-							});
-							String password = sha256.convert(utf8.encode(pssw.text)).toString();
-							addedSuperviseur.nom = nom.text;
-							addedSuperviseur.psswd = password;
-							addedSuperviseur.lot = lot.text;
-							addedSuperviseur.nom_utilisateur = alias.text;
-							bool status = await addSuperviseurs(addedSuperviseur);
-							if (status && mounted) {
-								statusAddConfirmation = true;
-								popItUp(context, "Superviseur ajouté");
-							}
-							else if (!status && mounted) {
-								popItUp(context, "Superviseur non ajouté");
-							}
-							setState(() {
-							  statusAddConfirmation = false;
-							});
-							Navigator.pop(context);
-						},
-						child: Text("Ajouter"),
-					),
-					Button(
-						onPressed: () => Navigator.pop(context),
-						child: const Text("Annuler"),
-					),
-				],
-			)
-		);
-		setState(() { });
-	}
-
 	void deletePopItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
@@ -214,11 +129,13 @@ class _SuperviseursState extends State<Superviseurs> {
 			title: Text("Superviseurs"),
 			commandBar: CommandBar(primaryItems: [
 				CommandBarButton(
-					onPressed: () async {
-						setState(() {
-						  statusAddConfirmation = true;
-						});
-						addSuperviseur(context);
+					onPressed: () {
+						showDialog(context: context,
+							builder: (_) => AddSuperviseurDialog(lots: lots, 
+							superviseursList: superviseursList,
+							onAdd: addSuperviseurs)
+						);
+						setState(() {});
 					},
 					label: statusAddConfirmation ? ProgressRing() : Text("Ajouter un superviseur"),
 					icon: Icon(FluentIcons.add)
