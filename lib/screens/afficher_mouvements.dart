@@ -170,17 +170,17 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		sheet.getRangeByIndex(1, 4).setText("Numero du mouvement");
 		sheet.getRangeByIndex(1, 5).setText("Numero du journal du camion");
 		sheet.getRangeByIndex(1, 6).setText("Stock Central Depart");
-		sheet.getRangeByIndex(1, 6).setText("Livraison ou Retour");
-		sheet.getRangeByIndex(1, 7).setText("District");
-		sheet.getRangeByIndex(1, 8).setText("Colline");
-		sheet.getRangeByIndex(1, 9).setText("Produit");
-		sheet.getRangeByIndex(1, 10).setText("Quantité");
-		sheet.getRangeByIndex(1, 11).setText("Stock Central Retour");
-		sheet.getRangeByIndex(1, 12).setText("Type de transport");
-		sheet.getRangeByIndex(1, 13).setText("Motif");
-		sheet.getRangeByIndex(1, 14).setText("Photo du mouvement");
-		sheet.getRangeByIndex(1, 15).setText("Photo du journal du camion");
-		DateFormat format = DateFormat("dd_MM_yyyy");
+		sheet.getRangeByIndex(1, 7).setText("Livraison ou Retour");
+		sheet.getRangeByIndex(1, 8).setText("District");
+		sheet.getRangeByIndex(1, 9).setText("Colline");
+		sheet.getRangeByIndex(1, 10).setText("Produit");
+		sheet.getRangeByIndex(1, 11).setText("Quantité");
+		sheet.getRangeByIndex(1, 12).setText("Stock Central Retour");
+		sheet.getRangeByIndex(1, 13).setText("Type de transport");
+		sheet.getRangeByIndex(1, 14).setText("Motif");
+		sheet.getRangeByIndex(1, 15).setText("Photo du mouvement");
+		sheet.getRangeByIndex(1, 16).setText("Photo du journal du camion");
+		DateFormat format = DateFormat("dd/MM/yyyy");
 		for (var i = 0; i < collectedLivraison.length; i++) {
 		  for (Boucle j in collectedLivraison[i].boucle) {
 			Livraison item = collectedLivraison[i];
@@ -190,27 +190,27 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 			sheet.getRangeByIndex(i + count, 3).setText(item.logisticOfficial);
 			sheet.getRangeByIndex(i + count, 4).setNumber(item.numeroMouvement
 				.toDouble());
-			sheet.getRangeByIndex(i + count, 4).setNumber(item.numeroJournalDuCamion
+			sheet.getRangeByIndex(i + count, 5).setNumber(item.numeroJournalDuCamion
 				.toDouble());
-			sheet.getRangeByIndex(i + count, 5).setText(formatStock(item.stockCentralDepart));
-			sheet.getRangeByIndex(i + count, 6).setText(j.livraisonRetour);
-			sheet.getRangeByIndex(i + count, 7).setText(item.district);
-			sheet.getRangeByIndex(i + count, 8).setText(j.colline);
-			sheet.getRangeByIndex(i + count, 9).setText(j.input);
+			sheet.getRangeByIndex(i + count, 6).setText(formatStock(item.stockCentralDepart));
+			sheet.getRangeByIndex(i + count, 7).setText(j.livraisonRetour);
+			sheet.getRangeByIndex(i + count, 8).setText(item.district);
+			sheet.getRangeByIndex(i + count, 9).setText(j.colline);
+			sheet.getRangeByIndex(i + count, 10).setText(j.input);
 			try {
-			  sheet.getRangeByIndex(i + count, 10).setNumber(double.parse(j.quantite));
+			  sheet.getRangeByIndex(i + count, 11).setNumber(double.parse(j.quantite));
 			}
 			on FormatException {
-			  sheet.getRangeByIndex(i + count, 10).setText(j.quantite);
+			  sheet.getRangeByIndex(i + count, 11).setText(j.quantite);
 			}
-			sheet.getRangeByIndex(i + count, 11).setText(formatStock(item.stockCentralRetour));
-			sheet.getRangeByIndex(i + count, 12).setText(item.typeTransport);
-			sheet.getRangeByIndex(i + count, 13).setText(item.motif);
-			sheet.hyperlinks.add(
-				sheet.getRangeByIndex(i + count, 14), xcel.HyperlinkType.url,
-				item.photoMvt);
+			sheet.getRangeByIndex(i + count, 12).setText(formatStock(item.stockCentralRetour));
+			sheet.getRangeByIndex(i + count, 13).setText(item.typeTransport);
+			sheet.getRangeByIndex(i + count, 14).setText(item.motif);
 			sheet.hyperlinks.add(
 				sheet.getRangeByIndex(i + count, 15), xcel.HyperlinkType.url,
+				item.photoMvt);
+			sheet.hyperlinks.add(
+				sheet.getRangeByIndex(i + count, 16), xcel.HyperlinkType.url,
 				item.photoJournal);
 			count++;
 		  }
@@ -256,8 +256,7 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 						icon: isDeleting ? ProgressRing() : Icon(material.Icons.delete),
 						label: Text("Supprimer un mouvement")
 					),
-					CommandBarButton(onPressed: (){
-					},
+					CommandBarButton(onPressed: () => widget.program == "Transfert" ? storeTransfert() : storeLivraison(),
 						icon: isDeleting ? ProgressRing() : Icon(FluentIcons.excel_document),
 						label: Text("Générer un fichier excel")
 					),
