@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/transfert.dart';
 import 'package:new_collecteur_ui/api/transfert_api.dart';
+import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/screens/tables/livraison_table.dart';
 
 // Global controllers for Livraison and Transfert
@@ -22,10 +23,6 @@ Map<int, TextEditingController> photoJournalControllers = {};
 
 // Transfert-specific controller
 Map<String, TextEditingController> stockSuivantsControllers = {};
-
-String formatStock(String stock){
-  return stock.replaceAll('_', ' ');
-}
 
 TextEditingController printStockSuivants(Transfert objTransf){
   String result = "";
