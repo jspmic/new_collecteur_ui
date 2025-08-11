@@ -13,6 +13,9 @@ class Superviseurs extends StatefulWidget {
 }
 
 class _SuperviseursState extends State<Superviseurs> {
+	bool statusDeleteConfirmation = false;
+	bool statusAddConfirmation = false;
+	bool statusApplyConfirmation = false;
 	bool isDeleting = false;
 	bool isModifying = false;
 	String lot = "Nouveau Lot pour le superviseur...";
@@ -40,23 +43,8 @@ class _SuperviseursState extends State<Superviseurs> {
 				actions: [
 					Button(
 						onPressed: () async {
+							statusApplyConfirmation = true;
 							Navigator.pop(context);
-							setState(() {
-								isModifying = true;
-							});
-							modifiedSuperviseurs.forEach((index, sup) async {
-								bool status = await modifySuperviseurs(sup);
-								if (status) {
-									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
-								}
-								else {
-									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
-								}
-							});
-							modifiedSuperviseurs = {};
-							setState(() {
-								isModifying = false;
-							});
 						},
 						child: const Text("Oui"),
 					),
@@ -93,7 +81,6 @@ class _SuperviseursState extends State<Superviseurs> {
 	}
 
 	void addSuperviseur(BuildContext context) async {
-		bool isLoading = false;
 		TextEditingController pssw = TextEditingController();
 		TextEditingController nom = TextEditingController();
 		TextEditingController lot = TextEditingController();
@@ -153,15 +140,15 @@ class _SuperviseursState extends State<Superviseurs> {
 							s.lot = lot.text;
 							s.nom_utilisateur = alias.text;
 							bool status = await addSuperviseurs(s);
-							if (status) {
+							if (status && mounted) {
+								statusAddConfirmation = true;
 								Navigator.pop(context);
-								popItUp(context, "Superviseur ajouté");
 							}
-							else {
+							else if (!status && mounted) {
 								popItUp(context, "Superviseur non ajouté");
 							}
 						},
-						child: isLoading ? ProgressRing() : Text("Ajouter"),
+						child: Text("Ajouter"),
 					),
 					Button(
 						onPressed: () => Navigator.pop(context),
@@ -195,21 +182,9 @@ class _SuperviseursState extends State<Superviseurs> {
 				content: Text("Voulez-vous supprimer le superviseur '${s.nom_utilisateur}'?"),
 				actions: [
 					Button(
-						onPressed: () async {
+						onPressed: () {
+							statusDeleteConfirmation = true;
 							Navigator.pop(context);
-							setState(() {
-								isDeleting = true;
-							});
-							bool deleteStatus = await deleteSuperviseurs(s);
-							if (deleteStatus && mounted) {
-								deletePopItUp(context, "Superviseur supprimé");
-							}
-							else {
-								deletePopItUp(context, "Superviseur non supprimé");
-							}
-							setState(() {
-								isDeleting = false;
-							});
 						},
 						child: const Text("Oui"),
 					),
@@ -229,13 +204,44 @@ class _SuperviseursState extends State<Superviseurs> {
 			title: Text("Superviseurs"),
 			commandBar: CommandBar(primaryItems: [
 				CommandBarButton(
-					onPressed: () => addSuperviseur(context),
-					label: Text("Ajouter un superviseur"),
+					onPressed: () {
+						setState(() {
+						  statusAddConfirmation = true;
+						});
+						addSuperviseur(context);
+						setState(() {
+						  statusAddConfirmation = false;
+						});
+					},
+					label: statusAddConfirmation ? ProgressRing() : Text("Ajouter un superviseur"),
 					icon: Icon(FluentIcons.add)
 				),
 				CommandBarButton(
-					onPressed: () => modifiedSuperviseurs.isEmpty ? popItUp(context, "Pas de changement(s) enregistré(s)") :
-					apply(context),
+					onPressed: () {
+						if (modifiedSuperviseurs.isEmpty) {
+							popItUp(context, "Pas de changement(s) enregistré(s)");
+							return;
+						}
+						apply(context);
+						if (statusApplyConfirmation) {
+							setState(() {
+								isModifying = true;
+							});
+							modifiedSuperviseurs.forEach((index, sup) async {
+								bool status = await modifySuperviseurs(sup);
+								if (status && mounted) {
+									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
+									modifiedSuperviseurs = {};
+								}
+								else if (mounted && !status) {
+									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
+								}
+							});
+							setState(() {
+								isModifying = false;
+							});
+						}
+					},
 					label: isModifying ? ProgressBar() : Text("Appliquer"),
 					tooltip: "Appliquer les changements",
 					icon: Icon(FluentIcons.accept)
@@ -264,7 +270,25 @@ class _SuperviseursState extends State<Superviseurs> {
 					TextEditingController nomController = TextEditingController();
 					TextEditingController psswController = TextEditingController();
 					return Expander(
-						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () => delete(superviseur),
+						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () async {
+							delete(superviseur);
+							if (statusDeleteConfirmation && mounted) {
+								setState(() {
+									isDeleting = true;
+								});
+								bool deleteStatus = await deleteSuperviseurs(superviseur);
+								if (deleteStatus && mounted) {
+									deletePopItUp(context, "Superviseur supprimé");
+								}
+								else if (!deleteStatus && mounted) {
+									deletePopItUp(context, "Superviseur non supprimé");
+								}
+								setState(() {
+									isDeleting = false;
+								});
+							}
+
+						},
 						icon: Icon(FluentIcons.calculator_multiply)),
 						trailing: IconButton( 
 							onPressed: () => setState(() {
