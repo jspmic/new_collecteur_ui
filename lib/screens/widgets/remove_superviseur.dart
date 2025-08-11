@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -59,11 +57,11 @@ class _DeleteSuperviseurDialogState extends State<DeleteSuperviseurDialog> {
 					popItUp(context, "Superviseur non supprimé");
 				}
 			},
-			child: Text("Oui")
+			child: Text("Supprimer")
         ),
         Button(
 			onPressed: () => Navigator.pop(context),
-			child: Text("Non")
+			child: Text("Fermer")
         ),
       ],
     );

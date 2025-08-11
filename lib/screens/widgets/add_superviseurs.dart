@@ -138,7 +138,7 @@ class _AddSuperviseurDialogState extends State<AddSuperviseurDialog> {
         ),
         Button(
           onPressed: () => Navigator.pop(context),
-          child: const Text("Annuler"),
+          child: const Text("Fermer"),
         ),
       ],
     );

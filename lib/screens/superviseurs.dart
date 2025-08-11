@@ -5,6 +5,7 @@ import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
 import 'package:new_collecteur_ui/screens/widgets/add_superviseurs.dart';
 import 'package:new_collecteur_ui/screens/widgets/remove_superviseur.dart';
+import 'package:new_collecteur_ui/screens/widgets/appliquer_changements.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 
 class Superviseurs extends StatefulWidget {
@@ -83,46 +84,6 @@ class _SuperviseursState extends State<Superviseurs> {
 		);
 	}
 
-	void deletePopItUp(BuildContext context, String mssg) async {
-		await showDialog(context: context,
-			builder: (context) => ContentDialog(
-				title: const Text("Status de l'opération"),
-				content: Text(mssg),
-				actions: [
-					Button(
-						onPressed: () => Navigator.pop(context),
-						child: const Text("Ok"),
-					),
-				],
-			)
-		);
-	}
-
-	void delete(Superviseur s) async {
-		await showDialog(context: context,
-			builder: (context) => ContentDialog(
-				title: const Text("Confirmation"),
-				content: Text("Voulez-vous supprimer le superviseur '${s.nom_utilisateur}'?"),
-				actions: [
-					Button(
-						onPressed: () {
-							statusDeleteConfirmation = true;
-							setState(() {
-								isDeleting = true;
-							});
-							Navigator.pop(context);
-						},
-						child: const Text("Oui"),
-					),
-					Button(
-						onPressed: () => Navigator.pop(context),
-						child: const Text("Non"),
-					),
-				],
-			)
-		);
-	}
-
 	@override
 	  Widget build(BuildContext context) {
 	  	return ScaffoldPage(
@@ -142,31 +103,11 @@ class _SuperviseursState extends State<Superviseurs> {
 				),
 				CommandBarButton(
 					onPressed: () {
-						if (modifiedSuperviseurs.isEmpty) {
-							popItUp(context, "Pas de changement(s) enregistré(s)");
-							return;
-						}
-						apply(context);
-						if (statusApplyConfirmation) {
-							setState(() {
-								isModifying = true;
-							});
-							modifiedSuperviseurs.forEach((index, sup) async {
-								bool status = await modifySuperviseurs(sup);
-								if (status && mounted) {
-									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
-									modifiedSuperviseurs = {};
-								}
-								else if (mounted && !status) {
-									popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
-								}
-							});
-							setState(() {
-								isModifying = false;
-							});
-						}
+						showDialog(context: context,
+							builder: (_) => ApplyChanges(onModify: modifySuperviseurs)
+						);
 					},
-					label: isModifying ? ProgressBar() : Text("Appliquer"),
+					label: Text("Appliquer"),
 					tooltip: "Appliquer les changements",
 					icon: Icon(FluentIcons.accept)
 				),
