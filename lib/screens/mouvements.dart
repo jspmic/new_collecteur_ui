@@ -59,13 +59,7 @@ class _MouvementsState extends State<Mouvements> {
 			retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
 		}
 		else {
-			if (district != "District") {
-				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId, district);
-			}
-			else {
-				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId, "");
-			}
-
+			retrievingStatus = await getLivraisons(dateDebut, dateFin, userId);
 		}
 
 		setState(() {
@@ -183,28 +177,6 @@ class _MouvementsState extends State<Mouvements> {
 							height: MediaQuery.of(context).size.height/15,
 						), // SizedBox
 						Divider(),
-						SizedBox(
-							height: MediaQuery.of(context).size.height/15,
-						), // SizedBox
-
-						Row(
-							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-							children: [
-								const Text("District:"),
-								DropDownButton(
-									title: Text(district),
-									items: districts.isEmpty ? [
-										MenuFlyoutItem(text: Text(""), onPressed: (){})
-									] : districts.map<MenuFlyoutItem>((_district) {
-										return MenuFlyoutItem(text: Text(_district.nom), onPressed: () {
-											setState(() {
-												district = _district.nom;
-											});
-										});
-									}).toList(),
-								) // DropDownButton
-							],
-						), // Row
 						SizedBox(
 							height: MediaQuery.of(context).size.height/15,
 						), // SizedBox
