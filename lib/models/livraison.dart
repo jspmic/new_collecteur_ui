@@ -43,23 +43,25 @@ class Livraison {
         required this.motif,
     });
 
-    factory Livraison.fromJson(Map<String, dynamic> json) => Livraison(
-        id: json["id"],
-        date: json["date"],
-        plaque: json["plaque"],
-        logisticOfficial: json["logistic_official"],
-        numeroMouvement: json["numero_mouvement"],
-        numeroJournalDuCamion: json["numero_journal_du_camion"],
-        stockCentralDepart: json["stock_central_depart"],
-        district: json["district"],
-        boucle: List<Boucle>.from(json["boucle"].map((x) => Boucle.fromJson(x))),
-        stockCentralRetour: json["stock_central_retour"],
-        photoMvt: json["photo_mvt"],
-        photoJournal: json["photo_journal"],
-        typeTransport: json["type_transport"],
-        user: json["user"],
-        motif: json["motif"],
-    );
+    factory Livraison.fromJson(Map<String, dynamic> json) { 
+		return Livraison(
+			id: json["id"],
+			date: json["date"],
+			plaque: json["plaque"],
+			logisticOfficial: json["logistic_official"],
+			numeroMouvement: json["numero_mouvement"],
+			numeroJournalDuCamion: json["numero_journal_du_camion"],
+			stockCentralDepart: json["stock_central_depart"],
+			district: json["district"],
+			boucle: List<Boucle>.from(json["boucle"].values.map((x) => Boucle.fromJson(x))),
+			stockCentralRetour: json["stock_central_retour"],
+			photoMvt: json["photo_mvt"],
+			photoJournal: json["photo_journal"],
+			typeTransport: json["type_transport"],
+			user: json["user"],
+			motif: json["motif"],
+		);
+	}
 
     Map<String, dynamic> toJson() => {
         "id": id,
@@ -94,10 +96,10 @@ class Boucle {
     });
 
     factory Boucle.fromJson(Map<String, dynamic> json) => Boucle(
-        livraisonRetour: json["livraison_retour"],
-        colline: json["colline"],
-        input: json["input"],
-        quantite: json["quantite"],
+        livraisonRetour: json["livraison_retour"] ?? "",
+        colline: json["colline"] ?? "",
+        input: json["input"] ?? "",
+        quantite: json["quantite"] ?? "",
     );
 
     Map<String, dynamic> toJson() => {
