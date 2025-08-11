@@ -20,6 +20,7 @@ class _SuperviseursState extends State<Superviseurs> {
 	bool isModifying = false;
 	String lot = "Nouveau Lot pour le superviseur...";
 	String lotChoisie = "Lot d'opération du superviseur...";
+	Superviseur addedSuperviseur = Superviseur(nom_utilisateur: "", id: 0, lot: "", nom: "");
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -85,7 +86,6 @@ class _SuperviseursState extends State<Superviseurs> {
 		TextEditingController nom = TextEditingController();
 		TextEditingController lot = TextEditingController();
 		TextEditingController alias = TextEditingController();
-		Superviseur s = Superviseur(nom_utilisateur: "", id: 0, lot: "", nom: "");
 
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
@@ -134,19 +134,26 @@ class _SuperviseursState extends State<Superviseurs> {
 						onPressed: () async {
 							if (pssw.text.isEmpty || nom.text.isEmpty || alias.text.isEmpty || lot.text.isEmpty) {
 								return; }
+							setState(() {
+							  statusAddConfirmation = true;
+							});
 							String password = sha256.convert(utf8.encode(pssw.text)).toString();
-							s.nom = nom.text;
-							s.psswd = password;
-							s.lot = lot.text;
-							s.nom_utilisateur = alias.text;
-							bool status = await addSuperviseurs(s);
+							addedSuperviseur.nom = nom.text;
+							addedSuperviseur.psswd = password;
+							addedSuperviseur.lot = lot.text;
+							addedSuperviseur.nom_utilisateur = alias.text;
+							bool status = await addSuperviseurs(addedSuperviseur);
 							if (status && mounted) {
 								statusAddConfirmation = true;
-								Navigator.pop(context);
+								popItUp(context, "Superviseur ajouté");
 							}
 							else if (!status && mounted) {
 								popItUp(context, "Superviseur non ajouté");
 							}
+							setState(() {
+							  statusAddConfirmation = false;
+							});
+							Navigator.pop(context);
 						},
 						child: Text("Ajouter"),
 					),
@@ -184,6 +191,9 @@ class _SuperviseursState extends State<Superviseurs> {
 					Button(
 						onPressed: () {
 							statusDeleteConfirmation = true;
+							setState(() {
+								isDeleting = true;
+							});
 							Navigator.pop(context);
 						},
 						child: const Text("Oui"),
@@ -204,14 +214,11 @@ class _SuperviseursState extends State<Superviseurs> {
 			title: Text("Superviseurs"),
 			commandBar: CommandBar(primaryItems: [
 				CommandBarButton(
-					onPressed: () {
+					onPressed: () async {
 						setState(() {
 						  statusAddConfirmation = true;
 						});
 						addSuperviseur(context);
-						setState(() {
-						  statusAddConfirmation = false;
-						});
 					},
 					label: statusAddConfirmation ? ProgressRing() : Text("Ajouter un superviseur"),
 					icon: Icon(FluentIcons.add)
@@ -273,9 +280,6 @@ class _SuperviseursState extends State<Superviseurs> {
 						leading: isDeleting ? ProgressRing() : IconButton(onPressed: () async {
 							delete(superviseur);
 							if (statusDeleteConfirmation && mounted) {
-								setState(() {
-									isDeleting = true;
-								});
 								bool deleteStatus = await deleteSuperviseurs(superviseur);
 								if (deleteStatus && mounted) {
 									deletePopItUp(context, "Superviseur supprimé");
