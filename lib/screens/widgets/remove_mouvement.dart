@@ -57,9 +57,10 @@ class _DeleteMouvementDialogState extends State<DeleteMouvementDialog> {
 						setState(() => isDeleting = false);
 						if (mounted && status) {
 							popItUp(context, "Mouvement supprimé");
-							return;
 						}
-						popItUp(context, "Mouvement non supprimé");
+						else if (mounted && !status) {
+							popItUp(context, "Mouvement non supprimé");
+						}
 					},
 					child: isDeleting ? ProgressRing() : Text("Supprimer"),
 				),
