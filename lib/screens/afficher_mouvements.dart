@@ -216,6 +216,7 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 						await showDialog(context: context,
 							builder: (context) => DeleteMouvementDialog(program: widget.program)
 						);
+						setState(() {});
 					},
 						icon: Icon(material.Icons.delete),
 						label: Text("Supprimer un(e) ${widget.program.toLowerCase()}")
