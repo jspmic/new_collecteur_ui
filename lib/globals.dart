@@ -31,6 +31,9 @@ Map<int, Lot> lotsChanged = {};
 Map<int, Superviseur> modifiedSuperviseurs = {};
 Map<String, String> districtsChanged = {};
 
+Map<String, Map<String, String>> modifiedLivraisons = {};
+Map<String, Map<String, String>> modifiedTransferts = {};
+
 // A little explanation is needed for this one
 // The format we'll have at the end of completion is this one:
 // {
