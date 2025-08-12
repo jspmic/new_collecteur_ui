@@ -19,6 +19,18 @@ void initializeGlobals() {
 }
 
 // This function saves a certain movement to the new content
+void saveModified(String movement, String id, Map<String, String> content, {int? boucleId}){
+  if (movement == "Livraison"){
+	modifiedLivraisons.containsKey(id) ? modifiedLivraisons[id]!.addAll(content)
+	: modifiedLivraisons[id] = content;
+  }
+  else {
+	modifiedTransferts.containsKey(id) ? modifiedTransferts[id]!.addAll(content)
+	: modifiedTransferts[id] = content;
+  }
+}
+
+// This function saves a certain movement to the new content
 // void saveModified(String movement, String id, Map<String, String> content, {int? boucleId}){
 // 	//   if (movement == "Livraison"){
 // 	// modifiedLivraisons.containsKey(id) ? modifiedLivraisons[id]!.addAll(content)
