@@ -52,11 +52,16 @@ class _MouvementsState extends State<Mouvements> {
 			isPopulating = true;
 		});
 		bool retrievingStatus = false;
-		if (program == "Transfert") {
-			retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
-		}
-		else {
-			retrievingStatus = await getLivraisons(dateDebut, dateFin, userId);
+		try {
+			if (program == "Transfert") {
+				retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
+			}
+			else {
+				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId);
+			}
+		} on Exception {
+			popItUp(context, "Une erreur est survenue");
+			return;
 		}
 
 		setState(() {

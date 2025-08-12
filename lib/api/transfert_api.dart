@@ -14,12 +14,14 @@ Future<bool> getTransferts(DateTime? _date1, DateTime? _date2, int userId) async
 	Uri uri;
 	String date1 = formatDate(_date1);
 	String date2 = formatDate(_date2);
-	if (date2.isNotEmpty) {
-		uri = Uri.parse("$HOST/api/transferts?date=$date1&date2=$date2&userId=$userId");
+	String url;
+	if (userId != -1) {
+		url = "$HOST/api/transferts?date=$date1&userId=$userId";
+	} else {
+		url = "$HOST/api/transferts?date=$date1";
 	}
-	else {
-		uri = Uri.parse("$HOST/api/transferts?date=$date1&userId=$userId");
-	}
+	uri = Uri.parse("$url&date2=$date2");
+
 	http.Response response = await http.get(uri);
 	if (response.statusCode != 200) {
 		return false;

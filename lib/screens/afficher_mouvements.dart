@@ -143,14 +143,17 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		final List<int> bytes = workbook.saveAsStream();
 		String date = widget.dateDebut.replaceAll('/', '_');
 		String now = DateFormat('hh_mm_ss_a').format(DateTime.now());
-		bool status = await writeCounter("Transferts_${date}_$now.xlsx", bytes);
+		String filename = "Transferts_${date}_$now.xlsx";
+		bool status = await writeCounter(filename, bytes);
 		workbook.dispose();
 		if (status) {
+			popItUp(context, "Consulter le fichier '$filename' dans le répértoire choisi");
 			setState(() {
 			  stateColor = Colors.green;
 			});
 		}
 		else {
+			popItUp(context, "Fichier '$filename' non enregistré");
 			setState(() {
 			  stateColor = Colors.red;
 			});
@@ -218,15 +221,18 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		final List<int> bytes = workbook.saveAsStream();
 		String date = widget.dateDebut.replaceAll('/', '_');
 		String now = DateFormat('hh_mm_ss_a').format(DateTime.now());
-		bool status = await writeCounter("Livraisons_${date}_$now.xlsx", bytes);
+		String filename = "Livraisons_${date}_$now.xlsx";
+		bool status = await writeCounter(filename, bytes);
 		workbook.dispose();
 		if (status) {
+			popItUp(context, "Consulter le fichier '$filename' dans le répértoire choisi");
 			setState(() {
 			  stateColor = Colors.green;
 			});
 		}
 		else {
 			setState(() {
+			popItUp(context, "Fichier '$filename' non enregistré");
 			  stateColor = Colors.red;
 			});
 		}

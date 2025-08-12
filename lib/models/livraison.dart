@@ -53,7 +53,7 @@ class Livraison {
 			numeroJournalDuCamion: json["numero_journal_du_camion"],
 			stockCentralDepart: json["stock_central_depart"],
 			district: json["district"],
-			boucle: List<Boucle>.from(json["boucle"].values.map((x) => Boucle.fromJson(x))),
+			boucle: List<Boucle>.from(json["boucle"].map((x) => Boucle.fromJson(x))),
 			stockCentralRetour: json["stock_central_retour"],
 			photoMvt: json["photo_mvt"],
 			photoJournal: json["photo_journal"],
