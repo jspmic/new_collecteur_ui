@@ -19,7 +19,7 @@ Future<bool> getSuperviseurs() async {
 	}
 	String _supervisors = jsonDecode(response.body);
 	List supervisors = jsonDecode(_supervisors);
-	superviseursList.add(Superviseur(nom_utilisateur: "Aucun", id: -1, lot: "", nom: ""));
+	superviseursList.add(Superviseur(nom_utilisateur: "Tous", id: -1, lot: "", nom: ""));
 	for (var sup in supervisors) {
 		superviseursList.add(
 			Superviseur(

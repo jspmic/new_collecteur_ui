@@ -189,7 +189,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Superviseur:"),
 								DropDownButton(
 									title: Text(superviseur),
-									items: superviseursList.isEmpty ? [MenuFlyoutItem(text: Text("Aucun"), onPressed: () => userId = -1)]
+									items: superviseursList.isEmpty ? [MenuFlyoutItem(text: Text("Aucun"), onPressed: () => userId = -2)]
 									: superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {

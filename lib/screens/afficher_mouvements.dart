@@ -13,6 +13,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 Future<bool> writeCounter(String fileName, List<int> bytes) async {
+	if (collectedTransfert.isEmpty && collectedLivraison.isEmpty) {
+		return false;
+	}
 	String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
 	if (selectedDirectory == null) {
@@ -109,7 +112,7 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 			});
 		}
 		else {
-			popItUp(context, "Fichier '$filename' non enregistré");
+			popItUp(context, "Aucun enregistrement n'a eu lieu");
 			setState(() {
 			  stateColor = Colors.red;
 			});
@@ -188,7 +191,7 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		}
 		else {
 			setState(() {
-			popItUp(context, "Fichier '$filename' non enregistré");
+			popItUp(context, "Aucun enregistrement n'a eu lieu");
 			  stateColor = Colors.red;
 			});
 		}
