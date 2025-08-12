@@ -51,3 +51,30 @@ Future<bool> removeTransfert(int id) async {
   }
   return true;
 }
+
+Future<bool> modifyTransfert() async {
+  String collector = dotenv.env["COLLECTOR_SECRET"].toString();
+  var url = Uri.parse("$HOST/api/transferts");
+  String body;
+  try{
+	  body = jsonEncode(modifiedTransferts);
+  } on Exception{
+	  return false;
+  }
+  try {
+    http.Response response = await http.patch(url, headers: {
+      "x-api-key": collector,
+	  'Content-Type': 'application/json; charset=UTF-8'
+    },
+	body: body
+	).timeout(const Duration(minutes: 2), onTimeout: () {
+      return http.Response("No connection", 404);
+    });
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  } on http.ClientException {
+    return false;
+  }
+}
