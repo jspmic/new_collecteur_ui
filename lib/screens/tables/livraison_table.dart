@@ -10,20 +10,6 @@ final fluent.GlobalKey<fluent.NavigatorState> navigatorKey = fluent.GlobalKey<fl
 
 Map<String, Map<String, String>> modifiedLivraisons = {};
 
-class DeletePopUp extends fluent.StatefulWidget {
-  const DeletePopUp({super.key});
-
-  @override
-  State<DeletePopUp> createState() => _DeletePopUpState();
-}
-
-class _DeletePopUpState extends fluent.State<DeletePopUp> {
-  @override
-  fluent.Widget build(fluent.BuildContext context) {
-    return const fluent.Text("Hello visible");
-  }
-}
-
 // Controllers for this kind of table
 Map<int, TextEditingController> idControllers = {};
 Map<int, TextEditingController> userControllers = {};
@@ -203,51 +189,6 @@ List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
   return rows;
 }
 
-// void popItUp(BuildContext context, String mssg) async {
-// 	await showDialog(context: context,
-// 		builder: (context) => ContentDialog(
-// 			title: const Text("Information"),
-// 			content: Text(mssg),
-// 			actions: [
-// 				Button(
-// 					onPressed: () => Navigator.pop(context),
-// 					child: const Text("Ok"),
-// 				),
-// 			],
-// 	));
-// }
-
-// void apply(BuildContext context) async {
-// 	await showDialog(context: context,
-// 		builder: (context) => fluent.ContentDialog(
-// 			title: const Text("Confirmation"),
-// 			content: const Text("Appliquer les changements?"),
-// 			actions: [
-// 				fluent.Button(
-// 					onPressed: () async {
-// 						Navigator.pop(context);
-// 						modifiedSuperviseurs.forEach((index, sup) async {
-// 							bool status = await modifySuperviseurs(sup);
-// 							if (status) {
-// 								popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' modifié(s)");
-// 							}
-// 							else {
-// 								popItUp(context, "Superviseur(s) '${sup.nom_utilisateur}' non modifié(s)");
-// 							}
-// 						});
-// 						modifiedSuperviseurs = {};
-// 					},
-// 					child: const Text("Oui"),
-// 				),
-// 				fluent.Button(
-// 					onPressed: () => Navigator.pop(context),
-// 					child: const Text("Non"),
-// 				),
-// 			],
-// 		)
-// 	);
-// }
-
 
 class LivraisonData extends DataTableSource{
   fluent.BuildContext context;
@@ -279,10 +220,8 @@ class livraisonTable extends fluent.StatefulWidget {
 }
 
 class _livraisonTableState extends fluent.State<livraisonTable> {
-  fluent.ScrollController _horizontalController = fluent.ScrollController();
+  fluent.ScrollController horizontalController = fluent.ScrollController();
   bool isVisible = false;
-
-  void toggleVisibility() => isVisible = !isVisible;
 
   @override
   fluent.Widget build(fluent.BuildContext context) {
@@ -297,11 +236,11 @@ class _livraisonTableState extends fluent.State<livraisonTable> {
 			  child: fluent.Column(
 			  children: [
 				  fluent.Scrollbar(
-					  controller: _horizontalController,
+					  controller: horizontalController,
 					  thumbVisibility: true,
 					  child: PaginatedDataTable(
 						primary: false,
-						controller: _horizontalController,
+						controller: horizontalController,
 						showFirstLastButtons: true,
 						columns: _createLivraisonColumns(), source: LivraisonData(context: context),
 						header: fluent.Center(child: fluent.Text(header)),
