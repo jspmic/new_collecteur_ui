@@ -39,28 +39,6 @@ class _SuperviseursState extends State<Superviseurs> {
 		));
 	}
 
-	void apply(BuildContext context) async {
-		await showDialog(context: context,
-			builder: (context) => ContentDialog(
-				title: const Text("Confirmation"),
-				content: const Text("Appliquer les changements?"),
-				actions: [
-					Button(
-						onPressed: () async {
-							statusApplyConfirmation = true;
-							Navigator.pop(context);
-						},
-						child: const Text("Oui"),
-					),
-					Button(
-						onPressed: () => Navigator.pop(context),
-						child: const Text("Non"),
-					),
-				],
-			)
-		);
-	}
-
 	void deny(BuildContext context) async {
 		await showDialog(context: context,
 			builder: (context) => ContentDialog(
@@ -91,21 +69,23 @@ class _SuperviseursState extends State<Superviseurs> {
 			title: Text("Superviseurs"),
 			commandBar: CommandBar(primaryItems: [
 				CommandBarButton(
-					onPressed: () {
-						showDialog(context: context,
+					onPressed: () async {
+						await showDialog(context: context,
 							builder: (_) => AddSuperviseurDialog(lots: lots, 
 							superviseursList: superviseursList,
 							onAdd: addSuperviseurs)
 						);
+						setState(() {});
 					},
 					label: statusAddConfirmation ? ProgressRing() : Text("Ajouter un superviseur"),
 					icon: Icon(FluentIcons.add)
 				),
 				CommandBarButton(
-					onPressed: () {
-						showDialog(context: context,
+					onPressed: () async {
+						await showDialog(context: context,
 							builder: (_) => ApplyChanges(onModify: modifySuperviseurs)
 						);
+						setState(() {});
 					},
 					label: Text("Appliquer"),
 					tooltip: "Appliquer les changements",
@@ -136,11 +116,12 @@ class _SuperviseursState extends State<Superviseurs> {
 					TextEditingController psswController = TextEditingController();
 					return Expander(
 						leading: IconButton(onPressed: () async {
-							showDialog(context: context,
+							await showDialog(context: context,
 								builder: (_) => DeleteSuperviseurDialog(
 								superviseur: superviseur,
 								onDelete: deleteSuperviseurs)
 							);
+							setState(() {});
 						},
 						icon: Icon(FluentIcons.calculator_multiply)),
 						trailing: IconButton( 
