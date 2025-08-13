@@ -90,6 +90,9 @@ class _MouvementsState extends State<Mouvements> {
 				commandBar: CommandBar(primaryItems: [
 					CommandBarButton(
 						onPressed: () async {
+							dateDebut = null;
+							dateFin = null;
+							program = "Program";
 							setState(() {
 								isCharging = true;
 							});
@@ -143,7 +146,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Date fin:"),
 								Divider(),
 								DatePicker(
-									startDate: DateTime(2003),
+									startDate: DateTime(2005),
 									endDate: DateTime(2090),
 									header: "Choisissez une date",
 									selected: dateFin,
