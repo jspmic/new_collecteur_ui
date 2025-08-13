@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
-import 'package:new_collecteur_ui/api/livraison_api.dart';
 
 final fluent.GlobalKey<fluent.NavigatorState> navigatorKey = fluent.GlobalKey<fluent.NavigatorState>();
 
@@ -86,8 +84,10 @@ List<DataColumn> _createLivraisonColumns() {
 }
 
 List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
+  String program = "Livraison";
   List<Livraison> _data = List.from(collectedLivraison);
   List<DataRow> rows = [];
+  int count = 0;
   _data.map((e){
     idControllers[e.id] = TextEditingController(text: e.id.toString());
     userControllers[e.id] = TextEditingController(text: e.user);
@@ -104,7 +104,8 @@ List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
     photoMvtControllers[e.id] = TextEditingController(text: e.photoMvt);
     photoJournalControllers[e.id] = TextEditingController(text: e.photoJournal);
     for (Boucle b in e.boucle) {
-	  String key = e.id.toString();
+	  count += 1;
+	  String key = "${e.id}-$count";
 	  keys[e.id] = key; // unique movement-boucle key for special controllers
 	  livraisonRetourControllers[key] = TextEditingController(text: b.livraisonRetour);
 	  collineControllers[key] = TextEditingController(text: b.colline);
@@ -120,68 +121,101 @@ List<DataRow> _createLivraisonRows(fluent.BuildContext context) {
 		  decoration: const InputDecoration(border: InputBorder.none))),
 
         DataCell(TextField(controller: dateControllers[e.id],
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "date", newValue: value);
+		  },
 		  decoration: const InputDecoration(border: InputBorder.none)), 
 		  showEditIcon: true),
 
         DataCell(TextField(controller: plaqueControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value){}), showEditIcon: true),
+		  onChanged: (value){
+		  	saveChange(program, id: e.id, columnName: "plaque", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: logisticOfficialsControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "logistic_official", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: numeroMvtControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "numero_mouvement", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: numeroJournalControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "numero_journal_du_camion", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: stockDepartControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "stock_central_depart", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: livraisonRetourControllers[keys[e.id]],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveBoucle(e, b.boucleId, "livraison_retour", value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: districtControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "district", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: collineControllers[keys[e.id]],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveBoucle(e, b.boucleId, "colline", value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: inputControllers[keys[e.id]],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveBoucle(e, b.boucleId, "input", value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: quantiteControllers[keys[e.id]],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveBoucle(e, b.boucleId, "quantite", value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: stockRetourControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "stock_central_retour", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: typeTransportControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "type_transport", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: motifControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value) {}), showEditIcon: true),
+		  onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "motif", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: photoMvtControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value){}), showEditIcon: true),
+		  onChanged: (value){
+		  	saveChange(program, id: e.id, columnName: "photo_mvt", newValue: value);
+		  }), showEditIcon: true),
 
         DataCell(TextField(controller: photoJournalControllers[e.id],
 		  decoration: const InputDecoration(border: InputBorder.none),
-		  onChanged: (value){}), showEditIcon: true),
+		  onChanged: (value){
+		  	saveChange(program, id: e.id, columnName: "photo_journal", newValue: value);
+		  }), showEditIcon: true),
     ]);
       rows.add(row);
     }
