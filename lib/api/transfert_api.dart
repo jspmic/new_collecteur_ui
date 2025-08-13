@@ -22,6 +22,7 @@ Future<bool> getTransferts(DateTime? _date1, DateTime? _date2, int userId) async
 	}
 	uri = Uri.parse("$url&date2=$date2");
 
+	modifiedTransferts = {};
 	http.Response response = await http.get(uri);
 	if (response.statusCode != 200) {
 		return false;
