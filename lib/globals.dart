@@ -31,8 +31,23 @@ Map<int, Lot> lotsChanged = {};
 Map<int, Superviseur> modifiedSuperviseurs = {};
 Map<String, String> districtsChanged = {};
 
-Map<String, Map<String, String>> modifiedLivraisons = {};
-Map<String, Map<String, String>> modifiedTransferts = {};
+
+// An example with this field would be:
+// - For a Livraison: {
+						// '1': {'date': '24/13/2090', 'district': 'Gitaramuka', ...},
+						// '2': {...},
+						// '...': {...}
+						// }  // Stored in modifiedLivraisons
+// - For a Transfert: {
+						// '1': {'date': '24/13/2090', 'district': 'Gitaramuka', ...},
+						// '2': {...},
+						// '...': {...}
+						// }  // Stored in modifiedTransferts
+// the keys are the ids of the movements
+// the values are maps with key the name of the field changed and the value the new value
+
+Map<int, Map<String, String>> modifiedLivraisons = {};
+Map<int, Map<String, String>> modifiedTransferts = {};
 
 // A little explanation is needed for this one
 // The format we'll have at the end of completion is this one:
