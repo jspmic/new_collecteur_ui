@@ -46,8 +46,8 @@ Map<String, String> districtsChanged = {};
 // the keys are the ids of the movements
 // the values are maps with key the name of the field changed and the value the new value
 
-Map<int, Map<String, String>> modifiedLivraisons = {};
-Map<int, Map<String, String>> modifiedTransferts = {};
+Map<String, Map<String, String>> modifiedLivraisons = {};
+Map<String, Map<String, String>> modifiedTransferts = {};
 
 // A little explanation is needed for this one
 // The format we'll have at the end of completion is this one:

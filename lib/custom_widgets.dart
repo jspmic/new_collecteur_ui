@@ -5,6 +5,7 @@ import 'package:new_collecteur_ui/models/superviseur.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/api/autres_champs_api.dart';
+import 'package:new_collecteur_ui/models/transfert.dart';
 
 void clearGlobals() {
 	superviseursList = [];
@@ -23,19 +24,27 @@ void initializeGlobals() {
 // This function saves a certain movement to the new content
 void saveModified(String movement, int id, Map<String, String> content){
   if (movement == "Livraison"){
-	modifiedLivraisons.containsKey(id) ? modifiedLivraisons[id]!.addAll(content)
-	: modifiedLivraisons[id] = content;
+	modifiedLivraisons.containsKey(id.toString()) ? modifiedLivraisons[id.toString()]!.addAll(content)
+	: modifiedLivraisons[id.toString()] = content;
   }
   else {
-	modifiedTransferts.containsKey(id) ? modifiedTransferts[id]!.addAll(content)
-	: modifiedTransferts[id] = content;
+	modifiedTransferts.containsKey(id.toString()) ? modifiedTransferts[id.toString()]!.addAll(content)
+	: modifiedTransferts[id.toString()] = content;
   }
 }
 
 void saveChange(String movement, {required int id,
 				required String columnName, required String newValue}){
   saveModified(movement, id, {columnName: newValue});
-  print(modifiedLivraisons);
+  print(modifiedTransferts);
+}
+
+void saveStockSuivants(Transfert t, String newValue){
+  List<String> stocks = newValue.split(' - ');
+  modifiedTransferts.containsKey(t.id.toString()) ?
+  modifiedTransferts[t.id.toString()]!["stock_central_suivants"] = jsonEncode(stocks)
+  : modifiedTransferts[t.id.toString()] = {"stock_central_suivants": jsonEncode(stocks)};
+  print(modifiedTransferts);
 }
 
 void saveBoucle(Livraison l, int boucleId, String columnName, String newValue){
@@ -53,10 +62,18 @@ void saveBoucle(Livraison l, int boucleId, String columnName, String newValue){
 		default:
 		return;
 	};
+	List<Map<String, dynamic>> boucles = [];
+	for (Boucle b in l.boucle) {
+		if (b.boucleId != boucle.boucleId) {
+			boucles.add(b.toJson());
+		}
+		else {
+			boucles.add(boucle.toJson());
+		}
+	}
 	modifiedLivraisons.containsKey(l.id) ?
-	  modifiedLivraisons[l.id]!.addAll({"boucle": jsonEncode(boucle.toJson())})
-	: modifiedLivraisons[l.id] = {"boucle": jsonEncode(boucle.toJson())};
-	print(modifiedLivraisons);
+	  modifiedLivraisons[l.id.toString()]!.addAll({"boucle": jsonEncode(boucles)})
+	: modifiedLivraisons[l.id.toString()] = {"boucle": jsonEncode(boucles)};
 }
 
 Future<bool> init() async {
