@@ -11,19 +11,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Fetch my code
+        uses: actions/checkout@v4
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          # Fix: Use a Flutter version that includes Dart >= 3.8.1.
-          # As of August 2024, use '3.22.1' or newer, ideally the latest stable.
           flutter-version: '3.32.4'
           channel: 'stable'
-          
-      - name: Write secrets to .env file
+
+      - name: Write secrets to .env file (pre-build)
         run: |
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" >> .env
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > .env
           echo "CODE=${{ secrets.CODE }}" >> .env
           echo "HOST=${{ secrets.HOST }}" >> .env
 
@@ -33,8 +31,28 @@ jobs:
       - name: Build Windows Executable
         run: flutter build windows --release
 
-      - name: Upload Windows Build Artifact
-        uses: actions/upload-artifact@v4  # Save the build artifact
+      - name: Write secrets to local directories
+        run: |
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > ./data/.env
+          echo "CODE=${{ secrets.CODE }}" >> ./data/.env
+          echo "HOST=${{ secrets.HOST }}" >> ./data/.env
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > ./data/flutter_assets/.env
+          echo "CODE=${{ secrets.CODE }}" >> ./data/flutter_assets/.env
+          echo "HOST=${{ secrets.HOST }}" >> ./data/flutter_assets/.env
+
+      - name: Compress .exe to password-protected ZIP
+        run: |
+          $ErrorActionPreference = "Stop"
+          $password = "${{ secrets.ZIP_PASSWORD }}"
+          $exe = "build/windows/x64/runner/Release/*.exe"
+          $zip = "collecteur-executable.zip"
+          # Use 7-Zip for password protection
+          choco install 7zip -y
+          & "C:\Program Files\7-Zip\7z.exe" a -tzip -p"$password" "$zip" $exe
+        shell: pwsh
+
+      - name: Upload ZIP Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: collecteur-executable
-          path: build/windows/x64/runner/Release/*
+          path: collecteur-executable.zip
