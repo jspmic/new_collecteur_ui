@@ -30,15 +30,15 @@ jobs:
 
       - name: Build Windows Executable
         run: flutter build windows --release
-
-      - name: Write secrets to local directories
+      
+      - name: Write secrets to build artifact .env files (post-build)
         run: |
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > ./data/.env
-          echo "CODE=${{ secrets.CODE }}" >> ./data/.env
-          echo "HOST=${{ secrets.HOST }}" >> ./data/.env
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > ./data/flutter_assets/.env
-          echo "CODE=${{ secrets.CODE }}" >> ./data/flutter_assets/.env
-          echo "HOST=${{ secrets.HOST }}" >> ./data/flutter_assets/.env
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > build/windows/x64/runner/Release/data/.env
+          echo "CODE=${{ secrets.CODE }}" >> build/windows/x64/runner/Release/data/.env
+          echo "HOST=${{ secrets.HOST }}" >> build/windows/x64/runner/Release/data/.env
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > build/windows/x64/runner/Release/data/flutter_assets/.env
+          echo "CODE=${{ secrets.CODE }}" >> build/windows/x64/runner/Release/data/flutter_assets/.env
+          echo "HOST=${{ secrets.HOST }}" >> build/windows/x64/runner/Release/data/flutter_assets/.env
 
       - name: Compress .exe to password-protected ZIP
         run: |
