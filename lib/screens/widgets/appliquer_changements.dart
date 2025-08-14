@@ -36,10 +36,16 @@ class _ApplyChangesState extends State<ApplyChanges> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: Text("Appliquer les changements?"),
+      title: isModifying ? ProgressRing() : Text("Appliquer les changements?"),
+	  content: SingleChildScrollView(child: Column(
+	  	children: modifiedSuperviseurs.isEmpty ? [Text("Aucune modification enregistrée")]
+		: modifiedSuperviseurs.values.map((sup) {
+			return Text("-> Le superviseur ${sup.nom} sera modifié");
+		}).toList(),
+	  )),
       actions: [
         Button(
-			onPressed: () async {
+			onPressed: () {
 				setState(() {
 				  isModifying = true;
 				});
@@ -57,7 +63,7 @@ class _ApplyChangesState extends State<ApplyChanges> {
 				  isModifying = false;
 				});
 			},
-			child: isModifying ? ProgressRing() : Text("Appliquer")
+			child: Text("Appliquer")
         ),
         Button(
 			onPressed: () => Navigator.pop(context),

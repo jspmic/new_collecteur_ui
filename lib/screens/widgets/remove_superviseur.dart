@@ -57,7 +57,7 @@ class _DeleteSuperviseurDialogState extends State<DeleteSuperviseurDialog> {
 					popItUp(context, "Superviseur non supprimé");
 				}
 			},
-			child: Text("Supprimer")
+			child: isDeleting ? ProgressRing() : Text("Supprimer")
         ),
         Button(
 			onPressed: () => Navigator.pop(context),

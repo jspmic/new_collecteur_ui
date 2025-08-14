@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:new_collecteur_ui/globals.dart';
+import 'package:new_collecteur_ui/screens/widgets/add_lot.dart';
 
 class DistrictsCollines extends StatefulWidget {
   const DistrictsCollines({super.key});
@@ -20,7 +21,12 @@ class _DistrictsCollinesState extends State<DistrictsCollines> {
 		  commandBar: CommandBar(
 			  primaryItems: [
 				CommandBarButton(
-					onPressed: (){},
+					onPressed: () async{
+						await showDialog(context: context,
+							builder: (_) => AddLotDialog()
+						);
+						setState(() {});
+					},
 					icon: Icon(FluentIcons.add),
 					label: const Text("Ajouter un lot")
 				)
