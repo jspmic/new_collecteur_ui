@@ -44,6 +44,7 @@ class Livraison {
     });
 
     factory Livraison.fromJson(Map<String, dynamic> json) { 
+		int boucleId = 0;
 		return Livraison(
 			id: json["id"],
 			date: json["date"],
@@ -53,7 +54,10 @@ class Livraison {
 			numeroJournalDuCamion: json["numero_journal_du_camion"],
 			stockCentralDepart: json["stock_central_depart"],
 			district: json["district"],
-			boucle: List<Boucle>.from(json["boucle"].values.map((x) => Boucle.fromJson(x))),
+			boucle: List<Boucle>.from(json["boucle"].map((x) {
+				boucleId += 1;
+				return Boucle.fromJson(x, boucleId);
+			})),
 			stockCentralRetour: json["stock_central_retour"],
 			photoMvt: json["photo_mvt"],
 			photoJournal: json["photo_journal"],
@@ -83,19 +87,22 @@ class Livraison {
 }
 
 class Boucle {
+	int boucleId;
     String livraisonRetour;
     String colline;
     String input;
     String quantite;
 
     Boucle({
+        required this.boucleId,
         required this.livraisonRetour,
         required this.colline,
         required this.input,
         required this.quantite,
     });
 
-    factory Boucle.fromJson(Map<String, dynamic> json) => Boucle(
+    factory Boucle.fromJson(Map<String, dynamic> json, int boucleId) => Boucle(
+		boucleId: boucleId,
         livraisonRetour: json["livraison_retour"] ?? "",
         colline: json["colline"] ?? "",
         input: json["input"] ?? "",

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:new_collecteur_ui/models/livraison.dart';
+import 'package:new_collecteur_ui/screens/widgets/remove_mouvement.dart';
+import 'package:new_collecteur_ui/screens/widgets/appliquer_changements_mouvement.dart';
 import 'package:path/path.dart' as p;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:new_collecteur_ui/api/livraison_api.dart';
-import 'package:new_collecteur_ui/api/transfert_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/screens/tables/transfert_table.dart';
@@ -14,6 +14,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 Future<bool> writeCounter(String fileName, List<int> bytes) async {
+	if (collectedTransfert.isEmpty && collectedLivraison.isEmpty) {
+		return false;
+	}
 	String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
 	if (selectedDirectory == null) {
@@ -46,9 +49,7 @@ class AfficherMouvements extends StatefulWidget {
 }
 
 class _AfficherMouvementsState extends State<AfficherMouvements> {
-	int a = 0;
 	bool isModifying = false;
-	bool isDeleting = false;
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -64,47 +65,6 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		));
 	}
 
-	void delete(BuildContext context) async {
-			await showDialog(context: context,
-				builder: (context) =>
-				StatefulBuilder(builder: (context, _) {
-					return ContentDialog(
-						title: const Text("Entrer le numéro Id du mouvement"),
-						content: Column(
-						mainAxisSize: MainAxisSize.min,
-						children: [
-							NumberBox(
-								value: a,
-								onChanged: (value) {
-									if (value != null) { a = value; }
-									else { a = 0; }
-								},
-							)
-						]),
-						actions: [
-							Button(
-								onPressed: () async {
-									setState(() => isDeleting = true);
-									bool status = widget.program == "Transfert" ? 
-										await removeTransfert(a) : await removeLivraison(a);
-									setState(() => isDeleting = false);
-									if (mounted && status) {
-										popItUp(context, "Mouvement supprimé");
-										return;
-									}
-									popItUp(context, "Mouvement non supprimé");
-								},
-								child: isDeleting ? ProgressRing() : Text("Supprimer"),
-							),
-							Button(
-								onPressed: () => Navigator.pop(context),
-								child: const Text("Retour"),
-							),
-						],
-					); // ContentDialog
-			}) //StatefulBuilder
-		); // showDialog
-	}
 	bool isLoading = false;
 	Color? stateColor;
 
@@ -143,14 +103,17 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		final List<int> bytes = workbook.saveAsStream();
 		String date = widget.dateDebut.replaceAll('/', '_');
 		String now = DateFormat('hh_mm_ss_a').format(DateTime.now());
-		bool status = await writeCounter("Transferts_${date}_$now.xlsx", bytes);
+		String filename = "Transferts_${date}_$now.xlsx";
+		bool status = await writeCounter(filename, bytes);
 		workbook.dispose();
 		if (status) {
+			popItUp(context, "Consulter le fichier '$filename' dans le répértoire choisi");
 			setState(() {
 			  stateColor = Colors.green;
 			});
 		}
 		else {
+			popItUp(context, "Aucun enregistrement n'a eu lieu");
 			setState(() {
 			  stateColor = Colors.red;
 			});
@@ -218,15 +181,18 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 		final List<int> bytes = workbook.saveAsStream();
 		String date = widget.dateDebut.replaceAll('/', '_');
 		String now = DateFormat('hh_mm_ss_a').format(DateTime.now());
-		bool status = await writeCounter("Livraisons_${date}_$now.xlsx", bytes);
+		String filename = "Livraisons_${date}_$now.xlsx";
+		bool status = await writeCounter(filename, bytes);
 		workbook.dispose();
 		if (status) {
+			popItUp(context, "Consulter le fichier '$filename' dans le répértoire choisi");
 			setState(() {
 			  stateColor = Colors.green;
 			});
 		}
 		else {
 			setState(() {
+			popItUp(context, "Aucun enregistrement n'a eu lieu");
 			  stateColor = Colors.red;
 			});
 		}
@@ -246,18 +212,26 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 				commandBar: CommandBar(
 				mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 				primaryItems: [
-					CommandBarButton(onPressed: (){},
+					CommandBarButton(onPressed: () async {
+						await showDialog(context: context,
+							builder: (context) => ApplyMovementsChanges(program: widget.program)
+						);
+						setState(() {});
+					},
 						icon: Icon(material.Icons.arrow_circle_up_outlined),
 						label: Text("Appliquer les changements")
 					),
-					CommandBarButton(onPressed: (){
-						delete(context);
+					CommandBarButton(onPressed: () async {
+						await showDialog(context: context,
+							builder: (context) => DeleteMouvementDialog(program: widget.program)
+						);
+						setState(() {});
 					},
-						icon: isDeleting ? ProgressRing() : Icon(material.Icons.delete),
-						label: Text("Supprimer un mouvement")
+						icon: Icon(material.Icons.delete),
+						label: Text("Supprimer un(e) ${widget.program.toLowerCase()}")
 					),
 					CommandBarButton(onPressed: () => widget.program == "Transfert" ? storeTransfert() : storeLivraison(),
-						icon: isDeleting ? ProgressRing() : Icon(FluentIcons.excel_document),
+						icon: Icon(FluentIcons.excel_document),
 						label: Text("Générer un fichier excel")
 					),
 				]),

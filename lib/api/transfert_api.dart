@@ -14,12 +14,15 @@ Future<bool> getTransferts(DateTime? _date1, DateTime? _date2, int userId) async
 	Uri uri;
 	String date1 = formatDate(_date1);
 	String date2 = formatDate(_date2);
-	if (date2.isNotEmpty) {
-		uri = Uri.parse("$HOST/api/transferts?date=$date1&date2=$date2&userId=$userId");
+	String url;
+	if (userId != -1) {
+		url = "$HOST/api/transferts?date=$date1&userId=$userId";
+	} else {
+		url = "$HOST/api/transferts?date=$date1";
 	}
-	else {
-		uri = Uri.parse("$HOST/api/transferts?date=$date1&userId=$userId");
-	}
+	uri = Uri.parse("$url&date2=$date2");
+
+	modifiedTransferts = {};
 	http.Response response = await http.get(uri);
 	if (response.statusCode != 200) {
 		return false;
@@ -48,4 +51,31 @@ Future<bool> removeTransfert(int id) async {
     return false;
   }
   return true;
+}
+
+Future<bool> modifyTransfert() async {
+  String collector = dotenv.env["COLLECTOR_SECRET"].toString();
+  var url = Uri.parse("$HOST/api/transferts");
+  String body;
+  try{
+	  body = jsonEncode(modifiedTransferts);
+  } on Exception{
+	  return false;
+  }
+  try {
+    http.Response response = await http.patch(url, headers: {
+      "x-api-key": collector,
+	  'Content-Type': 'application/json; charset=UTF-8'
+    },
+	body: body
+	).timeout(const Duration(minutes: 2), onTimeout: () {
+      return http.Response("No connection", 404);
+    });
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  } on http.ClientException {
+    return false;
+  }
 }

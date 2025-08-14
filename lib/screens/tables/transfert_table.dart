@@ -76,6 +76,7 @@ List<DataColumn> _createTransfertColumns() {
 }
 
 List<DataRow> _createTransfertRows() {
+  String program = "Transfert";
   List<Transfert> data = List.from(collectedTransfert);
   return data.map((e) {
     idControllers[e.id] = TextEditingController(text: e.id.toString());
@@ -104,53 +105,69 @@ List<DataRow> _createTransfertRows() {
 		),
 
 	  DataCell(TextField(controller: dateControllers[e.id],
+	  	onChanged: (value) {
+		  	saveChange(program, id: e.id, columnName: "date", newValue: value);
+		},
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: plaqueControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "plaque", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: logisticOfficialsControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "logistic_official", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: numeroMvtControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "numero_mouvement", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: numeroJournalDuCamionControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "numero_journal_du_camion", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: stockDepartControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "stock_central_depart", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
-      DataCell(TextField(controller: stockSuivantsControllers[e.id.toString()]),
+      DataCell(TextField(
+		controller: stockSuivantsControllers[e.id.toString()],
+		onChanged: (value) => saveStockSuivants(e, value),
+		decoration: const InputDecoration(border: InputBorder.none)),
 	  	showEditIcon: true
 	  ),
 
 	  DataCell(TextField(controller: stockRetourControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "stock_central_retour", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true),
 
 	  DataCell(TextField(controller: typeTransportControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "type_transport", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none),
 		), showEditIcon: true),
 
 	  DataCell(TextField(controller: motifControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "motif", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true
 		),
 
 	  DataCell(TextField(
 		  controller: photoMvtControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "photo_mvt", newValue: value),
 		  decoration: const InputDecoration(border: InputBorder.none)),
 		  showEditIcon: true
 		),
 
 	  DataCell(TextField(controller: photoJournalControllers[e.id],
+		onChanged: (value) => saveChange(program, id: e.id, columnName: "photo_journal", newValue: value),
 		decoration: const InputDecoration(border: InputBorder.none)),
 		showEditIcon: true
 		)

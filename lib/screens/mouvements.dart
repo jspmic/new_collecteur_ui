@@ -52,11 +52,16 @@ class _MouvementsState extends State<Mouvements> {
 			isPopulating = true;
 		});
 		bool retrievingStatus = false;
-		if (program == "Transfert") {
-			retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
-		}
-		else {
-			retrievingStatus = await getLivraisons(dateDebut, dateFin, userId);
+		try {
+			if (program == "Transfert") {
+				retrievingStatus = await getTransferts(dateDebut, dateFin, userId);
+			}
+			else {
+				retrievingStatus = await getLivraisons(dateDebut, dateFin, userId);
+			}
+		} on Exception {
+			popItUp(context, "Une erreur est survenue");
+			return;
 		}
 
 		setState(() {
@@ -85,6 +90,9 @@ class _MouvementsState extends State<Mouvements> {
 				commandBar: CommandBar(primaryItems: [
 					CommandBarButton(
 						onPressed: () async {
+							dateDebut = null;
+							dateFin = null;
+							program = "Program";
 							setState(() {
 								isCharging = true;
 							});
@@ -138,7 +146,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Date fin:"),
 								Divider(),
 								DatePicker(
-									startDate: DateTime(2003),
+									startDate: DateTime(2005),
 									endDate: DateTime(2090),
 									header: "Choisissez une date",
 									selected: dateFin,
@@ -184,7 +192,7 @@ class _MouvementsState extends State<Mouvements> {
 								const Text("Superviseur:"),
 								DropDownButton(
 									title: Text(superviseur),
-									items: superviseursList.isEmpty ? [MenuFlyoutItem(text: Text("Aucun"), onPressed: () => userId = -1)]
+									items: superviseursList.isEmpty ? [MenuFlyoutItem(text: Text("Aucun"), onPressed: () => userId = -2)]
 									: superviseursList.map<MenuFlyoutItem>((superv) {
 										return MenuFlyoutItem(text: Text(superv.nom_utilisateur), onPressed: () {
 											setState(() {
