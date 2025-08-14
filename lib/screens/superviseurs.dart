@@ -39,27 +39,10 @@ class _SuperviseursState extends State<Superviseurs> {
 		));
 	}
 
-	void deny(BuildContext context) async {
-		await showDialog(context: context,
-			builder: (context) => ContentDialog(
-				title: const Text("Confirmation"),
-				content: const Text("Annuler les changements?"),
-				actions: [
-					Button(
-						onPressed: (){
-							setState(() {
-								modifiedSuperviseurs = {};
-							});
-						},
-						child: const Text("Oui"),
-					),
-					Button(
-						onPressed: () => Navigator.pop(context),
-						child: const Text("Non"),
-					),
-				],
-			)
-		);
+	void deny(BuildContext context) {
+	setState(() {
+		modifiedSuperviseurs = {};
+	});
 	}
 
 	@override
@@ -133,34 +116,7 @@ class _SuperviseursState extends State<Superviseurs> {
 							}),
 							icon: Icon(FluentIcons.refresh)
 						),
-						header: TextBox(
-							controller: usernameController,
-							placeholder: superviseur.nom_utilisateur,
-							onChanged: (newUsername) {
-								if (newUsername.isEmpty) {
-									superviseur.nom_utilisateur = username;
-								}
-								else {
-									superviseur.nom_utilisateur = newUsername;
-								}
-								modifiedSuperviseurs[superviseur.id] = superviseur;
-							},
-						), // TextBox
-						content: Column(
-						children: [
-							TextBox(
-								controller: lotController,
-								placeholder: superviseur.lot,
-								onChanged: (newLot) {
-									if (newLot.isNotEmpty) {
-										superviseur.lot = newLot;
-										modifiedSuperviseurs[superviseur.id] = superviseur;
-									}
-									else {
-										superviseur.lot = lot;
-									}
-								},
-							),
+						header:
 							TextBox(
 								controller: nomController,
 								placeholder: superviseur.nom,
@@ -171,6 +127,34 @@ class _SuperviseursState extends State<Superviseurs> {
 									}
 									else {
 										superviseur.nom = nom;
+									}
+								},
+							),
+						content: Column(
+						children: [
+							TextBox(
+								controller: usernameController,
+								placeholder: superviseur.nom_utilisateur,
+								onChanged: (newUsername) {
+									if (newUsername.isEmpty) {
+										superviseur.nom_utilisateur = username;
+									}
+									else {
+										superviseur.nom_utilisateur = newUsername;
+									}
+									modifiedSuperviseurs[superviseur.id] = superviseur;
+								},
+							), // TextBox
+							TextBox(
+								controller: lotController,
+								placeholder: superviseur.lot,
+								onChanged: (newLot) {
+									if (newLot.isNotEmpty) {
+										superviseur.lot = newLot;
+										modifiedSuperviseurs[superviseur.id] = superviseur;
+									}
+									else {
+										superviseur.lot = lot;
 									}
 								},
 							),
