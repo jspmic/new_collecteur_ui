@@ -48,7 +48,7 @@ jobs:
           $zip = "collecteur-executable.zip"
           # Use 7-Zip for password protection
           choco install 7zip -y
-          & "C:\Program Files\7-Zip\7z.exe" a -tzip -p"$password" "$zip" $exe
+          & "C:\Program Files\7-Zip\7z.exe" a -tzip "-p$($password)" "$zip" "$($exe.FullName)"
         shell: pwsh
 
       - name: Upload ZIP Artifact
