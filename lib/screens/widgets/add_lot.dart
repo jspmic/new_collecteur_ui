@@ -1,4 +1,7 @@
+import 'package:new_collecteur_ui/api/autres_champs_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
+import 'package:new_collecteur_ui/models/lot.dart';
+import 'package:new_collecteur_ui/models/district.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class AddLotDialog extends StatefulWidget {
@@ -15,8 +18,9 @@ class _AddLotDialogState extends State<AddLotDialog> {
   bool isAdding = false;
   final TextEditingController nom = TextEditingController();
   int countWidgets = 0;
-  Map<int, String> districtName = {};
+  Map<int, District> districtName = {};
   List<Row> districtWidgets = [];
+  Lot newLot = Lot(nom: "", districts: []);
 
   bool statusAddConfirmation = false;
 
@@ -49,8 +53,7 @@ class _AddLotDialogState extends State<AddLotDialog> {
 					] : districts.map<MenuFlyoutItem>((_district) {
 						return MenuFlyoutItem(text: Text(_district.nom), onPressed: () {
 							setState(() {
-								districtName[idWidget] = _district.nom;
-								print(districtName);
+								districtName[idWidget] = _district;
 							});
 						});
 					}).toList(),
@@ -86,7 +89,6 @@ class _AddLotDialogState extends State<AddLotDialog> {
 		  Button(
 			  onPressed: () {
 				  countWidgets += 1;
-				  districtName[countWidgets] = "District $countWidgets";
 				  addDistrict(countWidgets);
 			  },
 			  child: const Icon(FluentIcons.add_field)
@@ -95,7 +97,25 @@ class _AddLotDialogState extends State<AddLotDialog> {
       ),
       actions: [
         Button(
-          onPressed: () {
+          onPressed: () async {
+			if (nom.text.isEmpty) {
+				return;
+			}
+		  	newLot.districts = districtName.values.toList();
+			newLot.nom = nom.text;
+			setState(() {
+				isAdding = true;
+			});
+			bool status = await addLot(newLot);
+			setState(() {
+				isAdding = false;
+			});
+			if (status && mounted) {
+				popItUp(context, "Lot ajouté");
+			}
+			else if (!status && mounted) {
+				popItUp(context, "Lot non ajouté");
+			}
           },
           child: isAdding ? ProgressRing() : Text("Ajouter"),
         ),
