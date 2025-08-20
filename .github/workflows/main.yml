@@ -11,49 +11,29 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Fetch my code
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          # Fix: Use a Flutter version that includes Dart >= 3.8.1.
+          # As of August 2024, use '3.22.1' or newer, ideally the latest stable.
           flutter-version: '3.32.4'
           channel: 'stable'
-
-      - name: Write secrets to .env file (pre-build)
+          
+      - name: Write secrets to .env file
         run: |
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > .env
+          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" >> .env
           echo "CODE=${{ secrets.CODE }}" >> .env
           echo "HOST=${{ secrets.HOST }}" >> .env
-
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Windows Executable
         run: flutter build windows --release
-      
-      - name: Write secrets to build artifact .env files (post-build)
-        run: |
-          mkdir -p build\windows\x64\runner\Release\data\flutter_assets
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > build\windows\x64\runner\Release\data\.env
-          echo "CODE=${{ secrets.CODE }}" >> build\windows\x64\runner\Release\data\.env
-          echo "HOST=${{ secrets.HOST }}" >> build\windows\x64\runner\Release\data\.env
-          echo "COLLECTOR_SECRET=${{ secrets.COLLECTOR_SECRET }}" > build\windows\x64\runner\Release\data\flutter_assets\.env
-          echo "CODE=${{ secrets.CODE }}" >> build\windows\x64\runner\Release\data\flutter_assets\.env
-          echo "HOST=${{ secrets.HOST }}" >> build\windows\x64\runner\Release\data\flutter_assets\.env
-        shell: bash
 
-      - name: Compress .exe to ZIP
-        run: |
-          $ErrorActionPreference = "Stop"
-          $buildDir = "build\windows\x64\runner\Release"
-          $exe = Join-Path $buildDir "collecteur_soft.exe"
-          $zip = "collecteur-executable.zip"
-          choco install 7zip -y
-          & "C:\Program Files\7-Zip\7z.exe" a -tzip "$zip" "$exe"
-        shell: pwsh
-
-      - name: Upload ZIP Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Windows Build Artifact
+        uses: actions/upload-artifact@v4  # Save the build artifact
         with:
           name: collecteur-executable
-          path: collecteur-executable.zip
+          path: build/windows/x64/runner/Release/*
