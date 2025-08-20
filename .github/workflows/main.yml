@@ -42,15 +42,14 @@ jobs:
           echo "HOST=${{ secrets.HOST }}" >> build\windows\x64\runner\Release\data\flutter_assets\.env
         shell: bash
 
-      - name: Compress .exe to password-protected ZIP
+      - name: Compress .exe to ZIP
         run: |
           $ErrorActionPreference = "Stop"
-          $password = "${{ secrets.ZIP_PASSWORD }}"
           $buildDir = "build\windows\x64\runner\Release"
           $exe = Join-Path $buildDir "collecteur_soft.exe"
           $zip = "collecteur-executable.zip"
           choco install 7zip -y
-          & "C:\Program Files\7-Zip\7z.exe" a -tzip "-p$($password)" "$zip" "$exe"
+          & "C:\Program Files\7-Zip\7z.exe" a -tzip "$zip" "$exe"
         shell: pwsh
 
       - name: Upload ZIP Artifact
