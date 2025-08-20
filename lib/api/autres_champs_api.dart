@@ -77,3 +77,15 @@ Future<bool> addLot(Lot lot) async {
 	}
 	return false;
 }
+
+Future<bool> removeLot(Lot lot) async {
+	Uri uri = Uri.parse("$HOST/api/lot?lot=${lot.nom}");
+	http.Response response = await http.delete(
+		headers: {"x-api-key": COLLECTEUR_SECRET},
+		uri);
+	if (response.statusCode == 200) {
+		lots.remove(lot);
+		return true;
+	}
+	return false;
+}

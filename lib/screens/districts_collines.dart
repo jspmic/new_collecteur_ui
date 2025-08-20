@@ -1,6 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:new_collecteur_ui/api/autres_champs_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/screens/widgets/add_lot.dart';
+import 'package:new_collecteur_ui/screens/widgets/remove_lot.dart';
 
 class DistrictsCollines extends StatefulWidget {
   const DistrictsCollines({super.key});
@@ -51,6 +53,15 @@ class _DistrictsCollinesState extends State<DistrictsCollines> {
                     });
                   },
                 ),
+				leading: IconButton(
+					onPressed: () async {
+						await showDialog(context: context,
+							builder: (_) => DeleteLotDialog(lot: lot)
+						);
+						setState(() {});
+					},
+					icon: Icon(FluentIcons.calculator_multiply)
+				),
                 trailing: IconButton(
                   icon: Icon(isExpanded ? FluentIcons.chevron_up : FluentIcons.chevron_down),
                   onPressed: () {
