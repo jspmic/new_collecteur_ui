@@ -21,4 +21,18 @@ class Lot {
         "nom": nom,
         "districts": districts,
     };
+
+	List<String> getDistrictsNames() {
+		List<String> names = [];
+		for (District d in districts) {
+			names.add(d.nom);
+		}
+		return names;
+	}
+
+	void printDistricts() {
+		for (District d in districts) {
+			print(d.nom);
+		}
+	}
 }

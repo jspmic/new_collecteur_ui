@@ -56,3 +56,36 @@ Future<bool> getFields() async {
 	}
 	return true;
 }
+
+
+Future<bool> addLot(Lot lot) async {
+	Uri uri = Uri.parse("$HOST/api/lot");
+	http.Response response = await http.post(
+		headers: {
+			"x-api-key": COLLECTEUR_SECRET,
+			"Content-Type": "application/json"
+		},
+		body: jsonEncode({
+			'lot': lot.nom,
+			'districts': lot.getDistrictsNames()
+		}),
+		uri
+	);
+	if (response.statusCode == 201) {
+		lots.add(lot);
+		return true;
+	}
+	return false;
+}
+
+Future<bool> removeLot(Lot lot) async {
+	Uri uri = Uri.parse("$HOST/api/lot?lot=${lot.nom}");
+	http.Response response = await http.delete(
+		headers: {"x-api-key": COLLECTEUR_SECRET},
+		uri);
+	if (response.statusCode == 200) {
+		lots.remove(lot);
+		return true;
+	}
+	return false;
+}

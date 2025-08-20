@@ -93,6 +93,10 @@ class _MouvementsState extends State<Mouvements> {
 							dateDebut = null;
 							dateFin = null;
 							program = "Program";
+							lots = [];
+							superviseursList = [];
+							modifiedSuperviseurs = {};
+							lotsChanged = {};
 							setState(() {
 								isCharging = true;
 							});
