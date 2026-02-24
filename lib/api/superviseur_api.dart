@@ -24,9 +24,9 @@ Future<bool> getSuperviseurs() async {
 		superviseursList.add(
 			Superviseur(
 				id: sup["id"],
-				nom: sup["nom"],
-				nom_utilisateur: sup["_n_9032"],
-				lot: sup["lot"],
+				nom: sup["nom"].toString(),
+				nom_utilisateur: sup["_n_9032"].toString(),
+				lot: sup["lot"].toString(),
 			)
 		);
 	}
