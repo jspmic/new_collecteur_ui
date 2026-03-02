@@ -36,15 +36,17 @@ void saveModified(String movement, int id, Map<String, String> content){
 void saveChange(String movement, {required int id,
 				required String columnName, required String newValue}){
   saveModified(movement, id, {columnName: newValue});
-  print(modifiedTransferts);
 }
 
 void saveStockSuivants(Transfert t, String newValue){
   List<String> stocks = newValue.split(' - ');
+  Map<String, dynamic> newStocks = {};
+  for (int i = 0; i < stocks.length; i++) {
+  	newStocks[i.toString()] = stocks[i];
+  }
   modifiedTransferts.containsKey(t.id.toString()) ?
-  modifiedTransferts[t.id.toString()]!["stock_central_suivants"] = jsonEncode(stocks)
-  : modifiedTransferts[t.id.toString()] = {"stock_central_suivants": jsonEncode(stocks)};
-  print(modifiedTransferts);
+  modifiedTransferts[t.id.toString()]!["stock_central_suivants"] = jsonEncode(newStocks)
+  : modifiedTransferts[t.id.toString()] = {"stock_central_suivants": jsonEncode(newStocks)};
 }
 
 void saveBoucle(Livraison l, int boucleId, String columnName, String newValue){
@@ -71,7 +73,7 @@ void saveBoucle(Livraison l, int boucleId, String columnName, String newValue){
 			boucles.add(boucle.toJson());
 		}
 	}
-	modifiedLivraisons.containsKey(l.id) ?
+	modifiedLivraisons.containsKey(l.id.toString()) ?
 	  modifiedLivraisons[l.id.toString()]!.addAll({"boucle": jsonEncode(boucles)})
 	: modifiedLivraisons[l.id.toString()] = {"boucle": jsonEncode(boucles)};
 }

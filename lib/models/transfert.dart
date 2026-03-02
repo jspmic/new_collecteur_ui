@@ -13,7 +13,7 @@ class Transfert {
     int numeroMouvement;
 	int numeroJournalDuCamion;
     String stockCentralDepart;
-    List stockCentralSuivants;
+    Map<String, dynamic> stockCentralSuivants;
     String stockCentralRetour;
     String photoMvt;
     String photoJournal;

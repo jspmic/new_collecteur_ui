@@ -26,7 +26,7 @@ Map<String, TextEditingController> stockSuivantsControllers = {};
 
 TextEditingController printStockSuivants(Transfert objTransf){
   String result = "";
-  for (String stock in objTransf.stockCentralSuivants){
+  for (String stock in objTransf.stockCentralSuivants.values){
     result += "${formatStock(stock)} - ";
   }
   stockSuivantsControllers[objTransf.id.toString()] = TextEditingController(text: result);
