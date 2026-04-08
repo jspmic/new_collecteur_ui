@@ -44,7 +44,6 @@ class Livraison {
     });
 
     factory Livraison.fromJson(Map<String, dynamic> json) { 
-		int boucleId = 0;
 		return Livraison(
 			id: json["id"],
 			date: json["date"],
@@ -54,10 +53,14 @@ class Livraison {
 			numeroJournalDuCamion: json["numero_journal_du_camion"],
 			stockCentralDepart: json["stock_central_depart"],
 			district: json["district"],
-			boucle: List<Boucle>.from(json["boucle"].values.map((x) {
-				boucleId += 1;
-				return Boucle.fromJson(x, boucleId);
-			})),
+			boucle: List<Boucle>.from(
+			  (json["boucle"] as List).asMap().entries.map((entry) {
+				return Boucle.fromJson(
+				  entry.value as Map<String, dynamic>,
+				  entry.key + 1,
+				);
+			  }),
+			),
 			stockCentralRetour: json["stock_central_retour"],
 			photoMvt: json["photo_mvt"],
 			photoJournal: json["photo_journal"],
