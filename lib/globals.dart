@@ -1,5 +1,6 @@
 import "package:new_collecteur_ui/models/district.dart";
 import "package:new_collecteur_ui/models/lot.dart";
+import "package:new_collecteur_ui/models/modification.dart";
 import "package:new_collecteur_ui/models/superviseur.dart";
 import "package:new_collecteur_ui/models/transfert.dart";
 import "package:new_collecteur_ui/models/livraison.dart";
@@ -19,8 +20,14 @@ List<String> collectedInputs = [];
 // Stocks collected from the API
 List<String> collectedStocks = [];
 
-// Stocks collected from the API
+// Type Transports collected from the API
 List<String> collectedTypeTransports = [];
+
+// Modifications collected from the API
+List<Modification> collectedDoneModifications = [];
+
+// Modifications collected from the API
+List<Modification> collectedUndoneModifications = [];
 
 // Typical Fields collected from the API
 List<Lot> lots = [];
