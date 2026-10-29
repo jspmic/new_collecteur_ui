@@ -18,7 +18,7 @@ String formatStock(String stock){
 }
 
 void initializeGlobals() {
-	superviseursList = [Superviseur(id: 0, nom_utilisateur: "", nom: "", lot: "")];
+	superviseursList = [];
 }
 
 // This function saves a certain movement to the new content

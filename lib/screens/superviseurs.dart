@@ -23,7 +23,6 @@ class _SuperviseursState extends State<Superviseurs> {
 	bool isModifying = false;
 	String lot = "Nouveau Lot pour le superviseur...";
 	String lotChoisie = "Lot d'opération du superviseur...";
-	Superviseur addedSuperviseur = Superviseur(nom_utilisateur: "", id: 0, lot: "", nom: "");
 
 	void popItUp(BuildContext context, String mssg) async {
 		await showDialog(context: context,
@@ -87,7 +86,8 @@ class _SuperviseursState extends State<Superviseurs> {
 				shrinkWrap: true,
 				itemCount: superviseursList.length,
 				itemBuilder: (context, index) {
-					final superviseur = superviseursList[index];
+					final Superviseur superviseur = superviseursList[index];
+
 					final username = superviseur.nom_utilisateur;
 					final lot = superviseur.lot;
 					final nom = superviseur.nom;
