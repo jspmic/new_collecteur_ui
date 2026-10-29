@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:new_collecteur_ui/models/livraison.dart';
+import 'package:new_collecteur_ui/screens/widgets/modifications.dart';
 import 'package:new_collecteur_ui/screens/widgets/remove_mouvement.dart';
 import 'package:new_collecteur_ui/screens/widgets/appliquer_changements_mouvement.dart';
 import 'package:path/path.dart' as p;
@@ -212,6 +213,15 @@ class _AfficherMouvementsState extends State<AfficherMouvements> {
 				commandBar: CommandBar(
 				mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 				primaryItems: [
+					CommandBarButton(onPressed: () async {
+						await showDialog(context: context,
+							builder: (context) => Modifications()
+						);
+						setState(() {});
+					},
+						icon: Icon(material.Icons.edit_note),
+						label: Text("Modifications suggérées")
+					),
 					CommandBarButton(onPressed: () async {
 						await showDialog(context: context,
 							builder: (context) => ApplyMovementsChanges(program: widget.program)
