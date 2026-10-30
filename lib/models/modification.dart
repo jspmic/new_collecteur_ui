@@ -12,7 +12,7 @@ class Modification {
     String description;
     bool status;
     String superviseur;
-    DateTime requestedAt;
+    String requestedAt;
 
     Modification({
         required this.id,
@@ -27,12 +27,12 @@ class Modification {
     factory Modification.fromJson(Map<String, dynamic> json) { 
 		return Modification(
 			id: json["id"],
-			mouvementId: json["mouvementId"],
-			mouvementName: json["mouvementName"],
+			mouvementId: json["mouvement_id"],
+			mouvementName: json["mouvement_name"],
 			description: json["description"],
 			status: json["status"],
 			superviseur: json["superviseur"],
-			requestedAt: json["requestedAt"]
+			requestedAt: json["requested_at"]
 		);
 	}
 

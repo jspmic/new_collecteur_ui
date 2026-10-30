@@ -28,7 +28,6 @@ class _ModificationsState extends State<Modifications> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     throw UnimplementedError();
   }
 }
