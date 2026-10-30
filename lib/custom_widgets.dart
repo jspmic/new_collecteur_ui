@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
 import 'package:new_collecteur_ui/models/superviseur.dart';
 import 'package:new_collecteur_ui/api/superviseur_api.dart';
+import 'package:new_collecteur_ui/api/modifications_api.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/api/autres_champs_api.dart';
 import 'package:new_collecteur_ui/models/transfert.dart';
@@ -84,7 +85,8 @@ Future<bool> init() async {
 	try {
 		bool loadingSuperviseurs = await getSuperviseurs();
 		bool loadingFields = await getFields();
-		if (!loadingSuperviseurs || !loadingFields) {
+		bool loadingModifications = await getModifications();
+		if (!loadingSuperviseurs || !loadingFields || !loadingModifications) {
 			return false;
 		}
 	} on Exception {

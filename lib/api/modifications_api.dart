@@ -22,14 +22,12 @@ Future<bool> getModifications() async {
 		return false;
 	}
 
-	Map<String, List<String>> responseModifications = jsonDecode(response.body);
+	var stringResponseModifications = jsonDecode(response.body);
+	Map<String, dynamic> responseModifications = jsonDecode(stringResponseModifications);
 
-	List<String>? done = responseModifications["done"]!;
-	List<String>? undone = responseModifications["undone"]!;
+	List done = responseModifications["done"]!;
+	List undone = responseModifications["undone"]!;
 
-	print(done);
-	print(undone);
-	
 	for (String d in done) {
 		Modification m = modificationFromJson(d);
 		collectedDoneModifications.add(m);
