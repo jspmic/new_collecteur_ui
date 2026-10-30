@@ -38,10 +38,11 @@ class Modification {
 
     Map<String, dynamic> toJson() => {
         "id": id,
-		"mouvementName": mouvementName,
+		"mouvement_id": mouvementId,
+		"mouvement_name": mouvementName,
 		"description": description,
 		"status": status,
 		"superviseur": superviseur,
-		"requestedAt": requestedAt
+		"requested_at": requestedAt
     };
 }
