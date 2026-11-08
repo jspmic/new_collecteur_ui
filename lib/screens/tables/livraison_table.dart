@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:new_collecteur_ui/globals.dart';
 import 'package:new_collecteur_ui/custom_widgets.dart';
 import 'package:new_collecteur_ui/models/livraison.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final fluent.GlobalKey<fluent.NavigatorState> navigatorKey = fluent.GlobalKey<fluent.NavigatorState>();
 
@@ -262,6 +263,32 @@ class _livraisonTableState extends fluent.State<livraisonTable> {
 	   if (collectedLivraison.isEmpty) {
 	   	return Center(child: const Text("Pas de données"));
 	   }
+
+	  final fluentTheme = fluent.FluentTheme.of(context);
+
+	  final brightness = fluentTheme.brightness;
+
+	  final materialTheme = ThemeData(
+		brightness: brightness,
+		dividerColor: brightness == Brightness.dark
+			? Colors.white12
+			: Colors.black12,
+		dataTableTheme: DataTableThemeData(
+		  headingRowColor: WidgetStatePropertyAll(
+			  Colors.transparent
+			// brightness == Brightness.dark
+			// 	? const Color(0xFF202020)
+			// 	: const Color(0x00000000),
+		  ),
+		  headingTextStyle: TextStyle(
+			fontWeight: FontWeight.bold,
+			color: brightness == Brightness.dark
+				? Colors.white
+				: Colors.black87,
+		  ),
+		),
+	  );
+
 	  String header = widget.dateFin == null ?
 	  "Livraisons du ${widget.date}" : "Livraisons du ${widget.date} au ${widget.dateFin}";
 	  return fluent.SafeArea(
@@ -272,14 +299,24 @@ class _livraisonTableState extends fluent.State<livraisonTable> {
 				  fluent.Scrollbar(
 					  controller: horizontalController,
 					  thumbVisibility: true,
-					  child: PaginatedDataTable(
-						primary: false,
-						controller: horizontalController,
-						showFirstLastButtons: true,
-						columns: _createLivraisonColumns(), source: LivraisonData(context: context),
-						header: fluent.Center(child: fluent.Text(header)),
-						rowsPerPage: collectedLivraison.length >= 8 ? 8 : collectedLivraison.length,
-					  )), // ScrollBar
+					  child: Localizations(
+						  locale: const Locale('fr', 'FR'),
+						  delegates: [
+							  GlobalMaterialLocalizations.delegate,
+							  GlobalWidgetsLocalizations.delegate,
+						  ],
+						  child: Theme(
+							  data: materialTheme,
+							  child: Material(
+								  child: PaginatedDataTable(
+									primary: false,
+									controller: horizontalController,
+									showFirstLastButtons: true,
+									columns: _createLivraisonColumns(), source: LivraisonData(context: context),
+									header: fluent.Center(child: fluent.Text(header)),
+									rowsPerPage: collectedLivraison.length >= 8 ? 8 : collectedLivraison.length,
+					  )))),
+					  ) // ScrollBar
 				]
 			  ) // Column
 		  ) // SingleChildScrollView
