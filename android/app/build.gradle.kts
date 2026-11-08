@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    // No kotlin-android plugin: AGP 9 provides built-in Kotlin.
+	id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -10,8 +10,8 @@ android {
     ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -31,10 +31,19 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
 flutter {
     source = "../.."
+}
+
+val newBuildDir =
+    rootProject.layout.buildDirectory.dir("../../build").get()
+
+rootProject.layout.buildDirectory.set(newBuildDir)
+
+subprojects {
+    project.layout.buildDirectory.set(newBuildDir.dir(project.name))
 }

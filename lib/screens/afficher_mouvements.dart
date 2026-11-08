@@ -18,7 +18,7 @@ Future<bool> writeCounter(String fileName, List<int> bytes) async {
 	if (collectedTransfert.isEmpty && collectedLivraison.isEmpty) {
 		return false;
 	}
-	String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+	String? selectedDirectory = await FilePicker.getDirectoryPath();
 
 	if (selectedDirectory == null) {
 		return false;
