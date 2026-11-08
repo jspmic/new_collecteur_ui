@@ -9,19 +9,19 @@ dependencies:
   flutter:
     sdk: flutter
   fluent_ui: ^4.12.0
-  window_manager: ^0.5.1
-  flutter_dotenv: ^5.2.1
+  window_manager: ^0.6.0
+  flutter_dotenv: ^6.0.1
   http: ^1.4.0
   crypto: ^3.0.6
-  file_picker: ^10.2.4
-  syncfusion_flutter_xlsio: ^30.2.4
+  file_picker: ^13.3.2
+  syncfusion_flutter_xlsio: ^35.1.43
   intl: ^0.20.2
   path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_launcher_icons: "^0.14.4"
 
 flutter:
